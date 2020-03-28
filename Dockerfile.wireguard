@@ -1,0 +1,18 @@
+FROM ubuntu:latest
+
+RUN add-apt-repository ppa:wireguard/wireguard && \
+    apt update && \
+    apt install -y wireguard wireguard-tools iptables net-tools && \
+    apt install -y linux-headers-cloud-amd64 linux-headers-amd64 wireguard-dkms && \
+    apt clean
+
+WORKDIR ./scripts
+
+ENV IPTABLES_MASQ=1
+
+RUN chmod 755 ./scripts/*
+
+VOLUME /etc/wireguard
+
+# Normal behavior is just to run wireguard with existing configs
+CMD ["run-wireguard.sh"]
