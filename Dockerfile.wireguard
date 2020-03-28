@@ -1,6 +1,8 @@
 FROM ubuntu:latest
 
-RUN add-apt-repository ppa:wireguard/wireguard && \
+RUN apt update && \
+    apt install -y software-properties-common && \
+    add-apt-repository ppa:wireguard/wireguard && \
     apt update && \
     apt install -y wireguard wireguard-tools iptables net-tools && \
     apt install -y linux-headers-cloud-amd64 linux-headers-amd64 wireguard-dkms && \
