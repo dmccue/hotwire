@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./compose-down && ./compose-up

@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+app-pihole/etc-pihole/
+app-pihole/etc-dnsmasq.d/

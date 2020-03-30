@@ -1,0 +1,52 @@
+version: "3.5"
+services:
+  httpd:
+    build: ./app-httpd
+    depends_on:
+    - wireguard
+    ports:
+    - "80:80"
+    volumes:
+    - ./app-httpd/htdocs:/usr/local/apache2/htdocs
+    dns: 1.1.1.1 
+    healthcheck:
+      test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null
+
+
+  wireguard:
+    build: ./app-wireguard
+    ports:
+    - "51820:51820/udp"
+    volumes:
+    - /etc/wireguard:/etc/wireguard
+    cap_add:
+    - NET_ADMIN 
+    - SYS_MODULE
+    healthcheck:
+      test: nc -zu localhost 51820
+ 
+
+  pihole:
+    image: pihole/pihole
+    depends_on:
+    - wireguard
+    dns:
+    - 127.0.0.1
+    - 1.1.1.1
+    - 1.0.0.1
+    volumes:
+    - ./app-pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+    - ./app-pihole/etc-pihole:/etc/pihole
+    environment:
+      TZ: Europe/London
+      DNSMASQ_LISTENING: local
+      IPv6: 'False'
+      DNSSEC: 'True'
+      DNS1: 1.1.1.1
+      DNS2: 1.0.0.1
+      WEBPASSWORD: PiHole123    
+    healthcheck:
+      test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null && nc -z localhost 53 && nc -zu localhost 53
+
+
+
