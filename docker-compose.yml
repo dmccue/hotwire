@@ -22,11 +22,11 @@ services:
     build: ./app-wireguard
     dns:
     - 1.1.1.1
-    extra_hosts:
-    - "test5:172.21.0.5"
-    links:
-    - "pihole"
-    - "httpd"
+      #extra_hosts:
+      #- "test5:172.21.0.5"
+      #    links:
+      # - "pihole"
+      # - "httpd"
     ports:
     - "51820:51820/udp"
     volumes:
@@ -45,8 +45,6 @@ services:
     image: pihole/pihole
     dns:
     - 127.0.0.1
-    - 1.1.1.1
-    - 1.0.0.1
     volumes:
     - ./app-pihole/etc-dnsmasq.d:/etc/dnsmasq.d
     - ./app-pihole/etc-pihole:/etc/pihole
