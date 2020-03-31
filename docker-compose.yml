@@ -1,20 +1,32 @@
-version: "3.5"
+# Important: For Ubuntu 18.04 please run 'ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf' to enable DNS resolution for container services
+# add 'nameserver 127.00.53' to /etc/resolv.conf
+
+version: "3"
 services:
   httpd:
+    hostname: httpd
     build: ./app-httpd
-    depends_on:
-    - wireguard
     ports:
     - "80:80"
     volumes:
     - ./app-httpd/htdocs:/usr/local/apache2/htdocs
-    dns: 1.1.1.1 
+    dns: 1.1.1.1
+    networks:
+    - default 
     healthcheck:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null
 
 
   wireguard:
+    hostname: wireguard
     build: ./app-wireguard
+    dns:
+    - 1.1.1.1
+    extra_hosts:
+    - "test5:172.21.0.5"
+    links:
+    - "pihole"
+    - "httpd"
     ports:
     - "51820:51820/udp"
     volumes:
@@ -22,14 +34,15 @@ services:
     cap_add:
     - NET_ADMIN 
     - SYS_MODULE
+    networks:
+    - default 
     healthcheck:
       test: nc -zu localhost 51820
  
 
   pihole:
+    hostname: pihole
     image: pihole/pihole
-    depends_on:
-    - wireguard
     dns:
     - 127.0.0.1
     - 1.1.1.1
@@ -44,9 +57,23 @@ services:
       DNSSEC: 'True'
       DNS1: 1.1.1.1
       DNS2: 1.0.0.1
-      WEBPASSWORD: PiHole123    
+      WEBPASSWORD: PiHole123
+    networks:
+    - default 
     healthcheck:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null && nc -z localhost 53 && nc -zu localhost 53
 
+# docker container create --name="portainer" \
+#    --volume /opt/docker/volumes/portainer/data:/data \
+#    --volume /var/run/docker.sock:/var/run/docker.sock \
+#    --publish 9000:9000 \
+#    --restart=always \
+#    portainer/portainer
 
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.21.0.0/16
 
