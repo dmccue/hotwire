@@ -54,7 +54,7 @@ which wg || {
   sudo apt install -y qrencode
 }
 
-echo "
+sudo ls /etc/wireguard/wg0.conf || echo "
 [Interface]
 DNS = 10.19.49.1
 Address = 10.19.49.1/24
@@ -69,17 +69,22 @@ PresharedKey = tUJyt5HSlg+n+VLrSZfAEBxcnpu7KT8Z1zBGXpd2E6M=
 AllowedIPs = 10.19.49.2/32
 " | sudo tee /etc/wireguard/wg0.conf
 
-# Finalise
-#wg-quick up /etc/wireguard/wg0.conf
+
+# Create wireguard config
 git clone https://github.com/burghardt/easy-wg-quick.git $HOME/easy-wg-quick
-mkdir /data/wireguard
+sudo mkdir /data/wireguard
+cd /data/wireguard
 curl ifconfig.me/ip > extnetip.txt
 echo 51820 > portno.txt
 $HOME/easy-wg-quick/easy-wg-quick $(date +%s)
 sudo wg-quick down /data/wireguard/wghub.conf
 sudo wg-quick up /data/wireguard/wghub.conf
+
+
+
+# Finalise
 curl ifconfig.me 2>/dev/null | sudo tee /root/external_ip > /dev/null
-sudo cat /etc/wireguard/wg0.conf | qrencode -t ansiutf8 | tee /root/wireguard.qr
+#sudo cat /etc/wireguard/wg0.conf | qrencode -t ansiutf8 | tee /root/wireguard.qr
 
 
 # Setup Subspace
