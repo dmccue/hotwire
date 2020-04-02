@@ -2,4 +2,8 @@
 
 which docker-compose || exit 1
 
+
+#docker build -t ubuntutest - < app-ubuntutest/Dockerfile
+
 docker-compose up -d --build
+

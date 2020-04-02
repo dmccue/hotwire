@@ -1,0 +1,34 @@
+#!/bin/bash
+
+function testC {
+
+	echo -n running: "'$@': "
+        $@ 2>&1 >/dev/null && echo OK || echo ----- FAILURE -----
+
+}
+
+
+echo Testing ping to ip
+testC docker run --rm ubuntutest ping -W1 -c1 99.9.9.99 
+testC docker run --rm ubuntutest ping -W1 -c1 1.1.1.1
+testC docker run --rm ubuntutest ping -W1 -c1 127.0.0.11
+
+echo Testing DNS resolution - with dnsspec
+#testC docker run --dns 1.1.1.1 --rm ubuntutest nslookup -timeout=1 google.com 1.1.1.1
+#testC docker run --dns 1.1.1.1 --rm ubuntutest nslookup -timeout=1 google.com
+#testC docker run --dns 1.1.1.1 --rm ubuntutest nslookup -timeout=1 pihole
+testC docker run --rm ubuntutest dig +time=2 +tries=1 @1.1.1.1 google.com
+testC docker run --rm ubuntutest dig +time=2 +tries=1 google.com
+testC docker run --rm ubuntutest dig +time=2 +tries=1 pihole
+
+echo Testing DNS resolution - without dns spec
+testC docker run --rm ubuntutest dig +time=2 +tries=1 @1.1.1.1 google.com
+testC docker run --rm ubuntutest dig +time=2 +tries=1 google.com
+testC docker run --rm ubuntutest dig +time=2 +tries=1 pihole
+
+echo Testing DNS resolution - hotwire network 
+testC docker run --network hotwire_default --rm ubuntutest dig +time=2 +tries=1 @1.1.1.1 google.com
+testC docker run --network hotwire_default --rm ubuntutest dig +time=2 +tries=1 google.com
+testC docker run --network hotwire_default --rm ubuntutest dig +time=2 +tries=1 pihole
+
+

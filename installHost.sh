@@ -32,8 +32,13 @@ which docker || {
 
 # Install Docker Compose
 which docker-compose || {
-  curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /tmp/docker-compose 2>/dev/null && sudo mv /tmp/docker-compose /usr/local/bin/
-  sudo chmod +x /usr/local/bin/docker-compose
+  sudo apt purge -y docker-compose
+  sudo apt -y autoremove
+      
+  sudo apt install -y python3-pip gnupg2 pass gpg
+  sudo pip3 install --user -y docker-compose
+  #curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /tmp/docker-compose 2>/dev/null && sudo mv /tmp/docker-compose /usr/local/bin/
+  #sudo chmod +x /usr/local/bin/docker-compose
 }
 
 # Install hotwire repo
@@ -76,6 +81,7 @@ sudo mkdir /data/wireguard
 cd /data/wireguard
 curl ifconfig.me/ip > extnetip.txt
 echo 51820 > portno.txt
+
 $HOME/easy-wg-quick/easy-wg-quick $(date +%s)
 sudo wg-quick down /data/wireguard/wghub.conf
 sudo wg-quick up /data/wireguard/wghub.conf

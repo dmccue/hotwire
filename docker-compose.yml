@@ -3,6 +3,14 @@
 
 version: "3"
 services:
+
+  ubuntutest:
+    build: ./app-ubuntutest      
+    image: ubuntutest
+    entrypoint: bash -c
+    command: exit 0
+
+      
   httpd:
     hostname: httpd
     build: ./app-httpd
@@ -12,7 +20,7 @@ services:
     - ./app-httpd/htdocs:/usr/local/apache2/htdocs
     dns: 1.1.1.1
     networks:
-    - default 
+    - default
     healthcheck:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null
 
@@ -28,16 +36,18 @@ services:
       # - "pihole"
       # - "httpd"
     ports:
-    - "51821:51820/udp"
+    - "51820:51820/udp"
     volumes:
-    - /etc/wireguard:/etc/wireguard
+    - /data/wireguard:/etc/wireguard
+    - /var/lib/dkms/wireguard:/var/lib/dkms/wireguard
+    - /lib/modules:/lib/modules
     cap_add:
     - NET_ADMIN 
     - SYS_MODULE
     networks:
-    - default 
+    - default
     healthcheck:
-      test: nc -zu localhost 51820
+      test: wg show | grep listening
  
 
   pihole:
@@ -45,6 +55,10 @@ services:
     image: pihole/pihole
     dns:
     - 127.0.0.1
+    ports:
+            #- "53/udp"
+    - "53:53/udp"
+    - "80/tcp"
     volumes:
     - ./app-pihole/etc-dnsmasq.d:/etc/dnsmasq.d
     - ./app-pihole/etc-pihole:/etc/pihole
@@ -57,7 +71,7 @@ services:
       DNS2: 1.0.0.1
       WEBPASSWORD: PiHole123
     networks:
-    - default 
+    - default
     healthcheck:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null && nc -z localhost 53 && nc -zu localhost 53
 
@@ -74,4 +88,3 @@ networks:
       driver: default
       config:
       - subnet: 172.21.0.0/16
-
