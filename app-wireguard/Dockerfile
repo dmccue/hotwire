@@ -1,5 +1,7 @@
-FROM cmulk/wireguard-docker:buster
+FROM ubuntu:bionic
 
-RUN apt-get update && \
-    apt-get install -y netcat dnsutils && \
-    apt-get clean
+RUN apt update && \
+    apt install -y netcat dnsutils && \
+    apt clean
+
+CMD sleep infinity

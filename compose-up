@@ -1,5 +1,5 @@
 #!/bin/bash
 
-#which docker-compose || sudo apt install -y docker-compose
+which docker-compose || exit 1
 
 docker-compose up -d --build
