@@ -3,6 +3,15 @@
 lsb_release -r | grep 18.04 || exit 1
 
 
+# Create swapfile
+sudo swapon --show | grep file || {
+  fallocate -l 1G /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+  swapon --show
+}
+
 # Setup SSH
 sudo sed -i 's/^PasswordAuthentication/#PasswordAuthentication/' /etc/ssh/sshd_config
 sudo service sshd restart

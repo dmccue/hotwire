@@ -15,7 +15,7 @@ services:
     hostname: httpd
     build: ./app-httpd
     ports:
-    - "80:80"
+    - "80"
     volumes:
     - ./app-httpd/htdocs:/usr/local/apache2/htdocs
     dns: 1.1.1.1
@@ -52,13 +52,15 @@ services:
 
   pihole:
     hostname: pihole
-    image: pihole/pihole
+    #image: pihole/pihole
+    build: ./app-pihole
     dns:
     - 127.0.0.1
     ports:
-            #- "53/udp"
-    - "53:53/udp"
+    - "53/udp"
+      #- "53:53/udp" #This breaks docker resolution
     - "80/tcp"
+    - "443/tcp"
     volumes:
     - ./app-pihole/etc-dnsmasq.d:/etc/dnsmasq.d
     - ./app-pihole/etc-pihole:/etc/pihole
