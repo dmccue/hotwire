@@ -18,7 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: List installed software on github image
-      shell: apt list --installed
+      run: apt list --installed
+      
     - name: execute compose BUILD script via ssh
       uses: appleboy/ssh-action@master
       with:
