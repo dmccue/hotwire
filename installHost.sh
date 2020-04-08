@@ -95,6 +95,12 @@ $HOME/easy-wg-quick/easy-wg-quick $(date +%s)
 sudo wg-quick down /data/wireguard/wghub.conf
 sudo wg-quick up /data/wireguard/wghub.conf
 
+
+# Setup Git
+git config credential.helper store
+git config --global credential.helper 'cache --timeout 7200'
+
+
 # Setup SSH
 #ssh-keygen -y -f ~/.ssh/id_rsa >> ~/.ssh/authorized_keys
 

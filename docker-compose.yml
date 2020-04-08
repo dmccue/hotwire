@@ -15,7 +15,7 @@ services:
     hostname: httpd
     build: ./app-httpd
     ports:
-    - "80"
+    - "80/tcp"
     volumes:
     - ./app-httpd/htdocs:/usr/local/apache2/htdocs
     dns:
@@ -65,8 +65,8 @@ services:
       DNSMASQ_LISTENING: local
       IPv6: 'False'
       DNSSEC: 'True'
-      DNS1: 1.1.1.1
-      DNS2: 1.0.0.1
+      DNS1: 1.1.1.2
+      DNS2: 1.0.0.2
       WEBPASSWORD: PiHole123
     networks:
       default:
