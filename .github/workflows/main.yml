@@ -24,14 +24,16 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         debug: true
+        env:
+          GITHUB_RUN_ID: ${{ GITHUB_RUN_ID }}
         script: |
           mkdir ~/deploy && cd deploy
-          git clone https://github.com/dmccue/hotwire.git hotwire_${{ GITHUB_RUN_ID }} && cd hotwire_${{ GITHUB_RUN_ID }}
+          git clone https://github.com/dmccue/hotwire.git hotwire_$GITHUB_RUN_ID && cd hotwire_$GITHUB_RUN_ID
           ./compose-down
           ./compose-build
           echo hostname: $(hostname -s)
           echo epoch: $(date +%s)
-          echo runid: ${{ GITHUB_RUN_ID }}
+          echo runid: $GITHUB_RUN_ID
 
 
     - name: execute compose RUN script via ssh
@@ -41,13 +43,15 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         debug: true
+        env:
+          GITHUB_RUN_ID: ${{ GITHUB_RUN_ID }}
         script: |
-          cd ~/deploy/hotwire_${{ GITHUB_RUN_ID }}
+          cd ~/deploy/hotwire_$GITHUB_RUN_ID
           ./compose-up
           whoami
           echo hostname: $(hostname -s)
           echo epoch: $(date +%s)
-          echo runid: ${{ GITHUB_RUN_ID }}
+          echo runid: $GITHUB_RUN_ID
 
 #    steps:
 #    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
