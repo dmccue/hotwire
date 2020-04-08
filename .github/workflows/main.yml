@@ -28,7 +28,7 @@ jobs:
         key: ${{ secrets.KEY }}
         debug: true
         script: |
-          mkdir ~/deploy && cd deploy
+          mkdir -p ~/deploy && cd deploy
           git clone https://github.com/dmccue/hotwire.git hotwire && cd hotwire
           ./compose-down
           ./compose-build
