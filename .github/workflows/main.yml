@@ -14,10 +14,10 @@ on:
 jobs:
 
   build:
-    name: Build
+    name: Build and Run
     runs-on: ubuntu-latest
     steps:
-    - name: executing remote ssh commands using password
+    - name: execute compose BUILD script via ssh
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
@@ -25,10 +25,30 @@ jobs:
         key: ${{ secrets.KEY }}
         debug: true
         script: |
+          mkdir ~/deploy
+          cd deploy
+          git clone https://github.com/dmccue/hotwire.git hotwire_$GITHUB_RUN_ID
+          cd hotwire_$GITHUB_RUN_ID
+          ./compose-down
+          ./compose-build
           whoami
           hostname -s
           echo epoch: $(date +%s)
 
+
+    - name: execute compose RUN script via ssh
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        debug: true
+        script: |
+          cd ~/deploy/hotwire_$GITHUB_RUN_ID
+          ./compose-up
+          whoami
+          hostname -s
+          echo epoch: $(date +%s)
 
 #    steps:
 #    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
