@@ -29,7 +29,7 @@ jobs:
         key: ${{ secrets.KEY }}
         script: |
           if [ -d ~/deploy/hotwire/ ]; then 
-            cd ~/deploy/hotwire && ./compose-down
+            cd ~/deploy/hotwire && docker-compose down
             cd ~
           fi
           sudo rm -rf ~/deploy/hotwire
@@ -37,9 +37,10 @@ jobs:
           cd ~/deploy
           git clone https://github.com/dmccue/hotwire.git hotwire && cd hotwire
           echo Compose Down
-          ./compose-down
+          docker-compose down
           echo Compose Build
-          ./compose-build
+          docker-compose build --pull
+          
           echo hostname: $(hostname -s)
           echo epoch: $(date +%s)
           echo pwd: $(pwd)
@@ -54,7 +55,10 @@ jobs:
         script: |
           cd ~/deploy/hotwire
           echo Compose Up
-          ./compose-up
+          docker-compose up -d --force-recreate
+          echo Compose ps
+          docker-compose ps
+          
           echo hostname: $(hostname -s)
           echo epoch: $(date +%s)
           echo pwd: $(pwd)
