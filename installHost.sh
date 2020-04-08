@@ -95,7 +95,8 @@ $HOME/easy-wg-quick/easy-wg-quick $(date +%s)
 sudo wg-quick down /data/wireguard/wghub.conf
 sudo wg-quick up /data/wireguard/wghub.conf
 
-
+# Setup SSH
+#ssh-keygen -y -f ~/.ssh/id_rsa >> ~/.ssh/authorized_keys
 
 # Finalise
 curl ifconfig.me 2>/dev/null | sudo tee /root/external_ip > /dev/null
