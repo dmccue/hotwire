@@ -17,6 +17,8 @@ jobs:
     name: Build and Run
     runs-on: ubuntu-latest
     steps:
+    - name: List installed software on github image
+      shell: apt list --installed
     - name: execute compose BUILD script via ssh
       uses: appleboy/ssh-action@master
       with:
@@ -24,17 +26,15 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         debug: true
-        env:
-          RUNID: ${{ env.GITHUB_RUN_ID }}
         script: |
           mkdir ~/deploy && cd deploy
-          git clone https://github.com/dmccue/hotwire.git hotwire_$RUNID && cd hotwire_$RUNID
+          git clone https://github.com/dmccue/hotwire.git hotwire && cd hotwire
           ./compose-down
           ./compose-build
           echo hostname: $(hostname -s)
           echo epoch: $(date +%s)
-          echo runid: $RUNID
           echo pwd: $(pwd)
+          
 
     - name: execute compose RUN script via ssh
       uses: appleboy/ssh-action@master
@@ -43,15 +43,11 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         debug: true
-        env:
-          RUNID: ${{ env.GITHUB_RUN_ID }}
         script: |
-          cd ~/deploy/hotwire_$RUNID
+          cd ~/deploy/hotwire
           ./compose-up
-          whoami
           echo hostname: $(hostname -s)
           echo epoch: $(date +%s)
-          echo runid: $RUNID
           echo pwd: $(pwd)
 
 #    steps:
