@@ -18,7 +18,8 @@ services:
     - "80"
     volumes:
     - ./app-httpd/htdocs:/usr/local/apache2/htdocs
-    dns: 1.1.1.1
+    dns:
+    - 172.21.0.1 
     networks:
     - default
     healthcheck:
@@ -30,6 +31,8 @@ services:
     build: ./app-wireguard
     ports:
     - "51820:51820/udp"
+    dns:
+    - 172.21.0.1
     volumes:
     - /data/wireguard:/etc/wireguard
     - /var/lib/dkms/wireguard:/var/lib/dkms/wireguard
@@ -55,8 +58,8 @@ services:
     - "80/tcp"
     - "443/tcp"
     volumes:
-    - ./app-pihole/etc-dnsmasq.d:/etc/dnsmasq.d
-    - ./app-pihole/etc-pihole:/etc/pihole
+    - /data/app-pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+    - /data/app-pihole/etc-pihole:/etc/pihole
     environment:
       TZ: Europe/London
       DNSMASQ_LISTENING: local
@@ -66,7 +69,8 @@ services:
       DNS2: 1.0.0.1
       WEBPASSWORD: PiHole123
     networks:
-    - default
+      default:
+        ipv4_address: 172.21.0.1 
     healthcheck:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null && nc -z localhost 53 && nc -zu localhost 53
 
