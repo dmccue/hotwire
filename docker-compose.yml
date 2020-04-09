@@ -19,7 +19,7 @@ services:
     volumes:
     - ./app-httpd/htdocs:/usr/local/apache2/htdocs
     dns:
-    - 172.21.0.1 
+    - 172.21.0.2 
     networks:
     - default
     healthcheck:
@@ -32,7 +32,7 @@ services:
     ports:
     - "51820:51820/udp"
     dns:
-    - 172.21.0.1
+    - 172.21.0.2
     volumes:
     - /data/wireguard:/etc/wireguard
     - /var/lib/dkms/wireguard:/var/lib/dkms/wireguard
@@ -70,7 +70,7 @@ services:
       WEBPASSWORD: PiHole123
     networks:
       default:
-        ipv4_address: 172.21.0.1 
+        ipv4_address: 172.21.0.2 
     healthcheck:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null && nc -z localhost 53 && nc -zu localhost 53
 
