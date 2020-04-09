@@ -5,11 +5,13 @@ docker pull projectatomic/dockerfile-lint
 for filename in $(ls app-*/Dockerfile); do
   DIRNAME=$(dirname $(readlink -f $filename))
 
-  echo ***********************
-  echo Lint testing: $filename
-  echo ***********************
-
-  docker run -it --rm --privileged -v $DIRNAME:/root/ projectatomic/dockerfile-lint dockerfile_lint -f Dockerfile 
+  echo "***********************"
+  echo "Lint testing: $filename"
+  echo "***********************"
+  echo "filename: $filename"
+  echo "dirname: $DIRNAME"
+  echo ""
+  docker run -it --rm --privileged -v $DIRNAME/:/root/ projectatomic/dockerfile-lint dockerfile_lint -j -f /root/Dockerfile 
 done
 
 

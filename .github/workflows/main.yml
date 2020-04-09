@@ -65,7 +65,7 @@ jobs:
         script: |
           cd ~/deploy/hotwire && \
           echo Compose Build && \
-          docker-compose build --pull || { echo Error: build unsuccessful - exit code $?; exit 1; }
+          docker-compose build --pull || { echo Error: build unsuccessful - exit code $?; docker info; exit 1; }
           
           echo hostname: $(hostname -s)
           echo epoch: $(date +%s)

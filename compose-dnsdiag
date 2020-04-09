@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#docker inspect --format "{{json .State.Health }}" $1 | jq
+
+CONTAINERIDS=$(docker ps -q)
+
+hostnames=()
+
+for container in $CONTAINERIDS; do
+  #echo $container
+  hostname=$(docker exec $container hostname)
+  #echo hostname: $hostname
+  hostnames+=( $hostname )
+  #docker exec $container "which dig && dig $hostname || nslookup $hostname" 
+done
+echo "*****"
+
+for container in $CONTAINERIDS; do
+  echo container: $container
+  for hostname in ${hostnames[@]}; do
+    echo testing: $hostname
+    docker exec $container dig +timeout=1 $hostname 2>&1 >/dev/null && echo --OK-- || echo --ERROR--
+  done
+echo "*****"
+done

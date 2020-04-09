@@ -100,6 +100,10 @@ sudo wg-quick up /data/wireguard/wghub.conf
 git config credential.helper store
 git config --global credential.helper 'cache --timeout 7200'
 
+# Setup timezone
+sudo timedatectl set-timezone Europe/London
+echo "Europe/London" | sudo tee /etc/timezone
+sudo dpkg-reconfigure --frontend noninteractive tzdata
 
 # Setup SSH
 #ssh-keygen -y -f ~/.ssh/id_rsa >> ~/.ssh/authorized_keys
