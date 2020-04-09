@@ -55,7 +55,7 @@ jobs:
         script: |
           cd ~/deploy/hotwire
           echo Compose Up
-          docker-compose up -d --force-recreate || ( echo Error: compose up failed && docker-compose ps && exit 1; )
+          docker-compose up -d --force-recreate || { echo Error: compose up failed - exit code $?; docker-compose ps; exit 1; }
           echo Compose ps
           docker-compose ps
           
