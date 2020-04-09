@@ -50,16 +50,16 @@ services:
     hostname: pihole
     #image: pihole/pihole
     build: ./app-pihole
-    dns:
-    - 127.0.0.1
+    #dns:
+    #- 127.0.0.11
     ports:
     - "53/udp"
       #- "53:53/udp" #This breaks docker resolution
     - "80/tcp"
     - "443/tcp"
-    volumes:
-    - /data/app-pihole/etc-dnsmasq.d:/etc/dnsmasq.d
-    - /data/app-pihole/etc-pihole:/etc/pihole
+    #volumes:
+    #- /data/app-pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+    #- /data/app-pihole/etc-pihole:/etc/pihole
     environment:
       TZ: Europe/London
       DNSMASQ_LISTENING: local
