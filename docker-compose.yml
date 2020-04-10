@@ -32,19 +32,19 @@ services:
     hostname: wireguard
     build: ./app-wireguard
     ports:
-    - "51820:51820/udp"
+      - "51820:51820/udp"
     dns:
-    - 172.21.0.2
+      - 172.21.0.2
     volumes:
-    - /data/wireguard:/etc/wireguard
-    - /var/lib/dkms/wireguard:/var/lib/dkms/wireguard
-    - /usr/src:/usr/src:ro
-    - /lib/modules:/lib/modules
+      - /data/wireguard:/etc/wireguard
+      - /var/lib/dkms/wireguard:/var/lib/dkms/wireguard
+      - /usr/src:/usr/src:ro
+      - /lib/modules:/lib/modules
     cap_add:
-    - NET_ADMIN 
-    - SYS_MODULE
+      - NET_ADMIN 
+      - SYS_MODULE
     networks:
-    - backend 
+      - backend 
     healthcheck:
       test: wg show | grep listening
  
@@ -61,7 +61,7 @@ services:
     #- "80/tcp"
     #- "443/tcp"
     volumes:
-    - /etc/timezone:/etc/timezone:ro
+      - /etc/timezone:/etc/timezone:ro
     #- /data/app-pihole/etc-dnsmasq.d:/etc/dnsmasq.d
     #- /data/app-pihole/etc-pihole:/etc/pihole
     environment:
@@ -73,12 +73,28 @@ services:
       DNS2: 1.0.0.2
       WEBPASSWORD: PiHole123
     networks:
-    - backend
-    #  backend:
-    #ipv4_address: 172.21.0.1 
+    #- backend
+      backend:
+        ipv4_address: 172.21.0.9 
     healthcheck:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null && nc -z localhost 53 && nc -zu localhost 53
 
+
+
+  portainer:
+    image: portainer/portainer
+    restart: always
+    command: -H unix:///var/run/docker.sock
+    ports:
+      - "9000:9000/tcp"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /data/portainer/data:/data
+      - /data/shared:/shared
+    environment:
+      - TZ=Europe/London
+    networks:
+      - backend
 # docker container create --name="portainer" \
 #    --volume /opt/docker/volumes/portainer/data:/data \
 #    --volume /var/run/docker.sock:/var/run/docker.sock \
