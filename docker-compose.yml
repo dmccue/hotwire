@@ -73,9 +73,9 @@ services:
       DNS2: 1.0.0.2
       WEBPASSWORD: PiHole123
     networks:
-    #- backend
-      backend:
-        ipv4_address: 172.21.0.9 
+    - backend
+    #  backend:
+    #    ipv4_address: 172.21.0.9 
     healthcheck:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null && nc -z localhost 53 && nc -zu localhost 53
 
