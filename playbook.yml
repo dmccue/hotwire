@@ -1,7 +1,7 @@
 ---
   - name: "Setup docker host - ubuntu 18.04 LTS"
     hosts: localhost
-    connection: local 
+    connection: local
     tasks:
 
     # Install wireguard
@@ -16,32 +16,53 @@
     - service: name=sshd state=reloaded
       become: yes
 
+
+    # Fix DNS resolver
     - systemd: name=systemd-resolved state=stopped
       become: yes
     - service: name=systemd-resolved state=stopped
       become: yes
 
-    # Fix DNS resolver
     - command: | 
         echo "nameserver 172.26.0.2
         nameserver 1.1.1.1
         search eu-west-2.compute.internal"
-      register: "dnsoutput"
-    - copy: content="{{ dnsoutput.stdout }}" dest=/etc/resolv.conf 
+      register: dnsoutput
+    - copy: content={{ dnsoutput.stdout }} dest=/etc/resolv.conf 
       become: yes
 
 
     # Install docker
     - apt: name=docker-ce
       become: yes
+    - apt: name=docker-ce-cli
+      become: yes
+    - apt: name=containerd.io
+      become: yes
     - group: name=docker
       become: yes
     - user:
-        name: '{{ user }}' 
+        name: "{{ ansible_user_id }}"
         groups: docker
         append: yes
+      become: yes
+    - service: name=docker state=reloaded
+      become: yes
 
+    # Setup Git
+    - command: git config credential.helper store
+    - command: git config --global credential.helper 'cache --timeout 7200'
 
+    # Setup timezone
+    - timezone: name=Europe/London
+      become: yes
+
+    - file:
+        path: "{{ ansible_user_dir }}/deploy"
+        state: directory
+    - git:
+        repo: https://github.com/dmccue/hotwire
+        dest: "{{ ansible_user_dir }}/deploy"
       
     # - name: "just execute a ls -lrt command"
     #  shell: "ls -lrt"

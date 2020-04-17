@@ -44,15 +44,15 @@ sudo swapon --show | grep file || {
 #}
 
 # Install Docker Compose
-which docker-compose || {
-  sudo apt purge -y docker-compose
-  sudo apt -y autoremove
+#which docker-compose || {
+#  sudo apt purge -y docker-compose
+#  sudo apt -y autoremove
       
-  sudo apt install -y python3-pip gnupg2 pass gpg
-  sudo pip3 install --user -y docker-compose
+#  sudo apt install -y python3-pip gnupg2 pass gpg
+#  sudo pip3 install --user -y docker-compose
   #curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /tmp/docker-compose 2>/dev/null && sudo mv /tmp/docker-compose /usr/local/bin/
   #sudo chmod +x /usr/local/bin/docker-compose
-}
+#}
 
 # Install hotwire repo
 ls $HOME/hotwire >/dev/null || {
@@ -101,13 +101,13 @@ sudo wg-quick up /data/wireguard/wghub.conf
 
 
 # Setup Git
-git config credential.helper store
-git config --global credential.helper 'cache --timeout 7200'
+#git config credential.helper store
+#git config --global credential.helper 'cache --timeout 7200'
 
 # Setup timezone
-sudo timedatectl set-timezone Europe/London
-echo "Europe/London" | sudo tee /etc/timezone
-sudo dpkg-reconfigure --frontend noninteractive tzdata
+#sudo timedatectl set-timezone Europe/London
+#echo "Europe/London" | sudo tee /etc/timezone
+#sudo dpkg-reconfigure --frontend noninteractive tzdata
 
 # Setup SSH
 #ssh-keygen -y -f ~/.ssh/id_rsa >> ~/.ssh/authorized_keys
