@@ -5,10 +5,11 @@
     vars:
       pkgs:
       - wireguard
-      - docker-ce
-      - docker-ce-cli
+      - docker.io
+        #- docker-ce
+        #- docker-ce-cli
       - docker-compose
-      - containerd.io
+        #- containerd.io
       - git 
 
     tasks:
