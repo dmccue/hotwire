@@ -4,6 +4,62 @@
     connection: local
     tasks:
 
+    # Setup swapspace
+    - set_fact: swap_space="1G"
+
+    - name: set swap_file variable
+      set_fact: swap_file="/{{ swap_space }}.swap"
+
+    - name: check if swap file exists
+      stat: path="{{ swap_file }}"
+      register: swap_file_check
+
+    - name: create swap file
+      become: yes
+      command: fallocate -l {{ swap_space }} {{ swap_file }}
+      when: not swap_file_check.stat.exists
+
+    - name: Create swap space
+      become: yes
+      command: dd if=/dev/zero of={{ swap_file }} bs=1M count=512
+      when: not swap_file_check.stat.exists
+
+    - name: set permissions on swap file
+      become: yes
+      file:
+        path: "{{ swap_file }}"
+        mode: 0600
+
+    - name: format swap file
+      become: yes
+      command: mkswap {{ swap_file }}
+      when: not swap_file_check.stat.exists
+
+    - name: add to fstab
+      become: yes
+      lineinfile:
+        dest: /etc/fstab
+        regexp: "{{ swap_file }}"
+        line: "{{ swap_file }} none swap sw 0 0"
+
+    - name: turn on swap
+      become: yes
+      command: swapon -a
+
+    - name: set swapiness
+      become: yes
+      sysctl:
+        name: vm.swappiness
+        value: "1"
+
+    #    sudo swapon --show | grep file || {
+    #  fallocate -l 1G /swapfile
+    #  chmod 600 /swapfile
+    #  mkswap /swapfile
+    #  swapon /swapfile
+    #  swapon --show
+
+
     # Install wireguard
     - apt: name=wireguard
       become: yes
@@ -49,14 +105,14 @@
     - service: name=docker state=reloaded
       become: yes
 
-    # Setup Git
-    - command: git config credential.helper store
-    - command: git config --global credential.helper 'cache --timeout 7200'
-
     # Setup timezone
     - timezone: name=Europe/London
       become: yes
 
+    # Setup Git
+    - apt: name=git
+    - command: git config credential.helper store
+    - command: git config --global credential.helper 'cache --timeout 7200'
     - file:
         path: "{{ ansible_user_dir }}/deploy"
         state: directory

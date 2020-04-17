@@ -4,17 +4,16 @@
 
 
 sudo apt install -y ansible
-sudo curl -L https://raw.githubusercontent.com/dmccue/hotwire/master/playbook.yml -o /root/playbook.yml
-sudo ansible-playbook /root/playbook.yml
+sudo curl -L https://raw.githubusercontent.com/dmccue/hotwire/master/playbook.yml -o /root/playbook.yml && sudo ansible-playbook /root/playbook.yml
 
 # Create swapfile
-sudo swapon --show | grep file || {
-  fallocate -l 1G /swapfile
-  chmod 600 /swapfile
-  mkswap /swapfile
-  swapon /swapfile
-  swapon --show
-}
+#sudo swapon --show | grep file || {
+#  fallocate -l 1G /swapfile
+#  chmod 600 /swapfile
+#  mkswap /swapfile
+#  swapon /swapfile
+#  swapon --show
+#}
 
 # Setup SSH
 #sudo sed -i 's/^PasswordAuthentication/#PasswordAuthentication/' /etc/ssh/sshd_config
@@ -55,9 +54,9 @@ sudo swapon --show | grep file || {
 #}
 
 # Install hotwire repo
-ls $HOME/hotwire >/dev/null || {
-  su ubuntu -cl 'cd $HOME && git clone https://github.com/dmccue/hotwire.git && cd $HOME/hotwire && docker-compose up'
-}
+#ls $HOME/hotwire >/dev/null || {
+#  su ubuntu -cl 'cd $HOME && git clone https://github.com/dmccue/hotwire.git && cd $HOME/hotwire && docker-compose up'
+#}
 
 
 # Install wireguard
