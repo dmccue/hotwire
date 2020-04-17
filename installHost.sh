@@ -112,7 +112,7 @@ sudo wg-quick up /data/wireguard/wghub.conf
 #ssh-keygen -y -f ~/.ssh/id_rsa >> ~/.ssh/authorized_keys
 
 # Finalise
-curl ifconfig.me 2>/dev/null | sudo tee /root/external_ip > /dev/null
+#curl ifconfig.me 2>/dev/null | sudo tee /root/external_ip > /dev/null
 #sudo cat /etc/wireguard/wg0.conf | qrencode -t ansiutf8 | tee /root/wireguard.qr
 
 
