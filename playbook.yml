@@ -2,7 +2,18 @@
   - name: "Setup docker host - ubuntu 18.04 LTS"
     hosts: localhost
     connection: local
+    vars:
+      pkgs:
+      - wireguard
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - git 
+
     tasks:
+    # Install packages
+    - apt: name={{ pkgs }}
+      become: yes
 
     # Setup swapspace
     - set_fact: swap_space="1G"
@@ -33,8 +44,6 @@
 
 
     # Install wireguard
-    - apt: name=wireguard
-      become: yes
     - modprobe: name=wireguard
       become: yes
    
@@ -61,12 +70,6 @@
 
 
     # Install docker
-    - apt: name=docker-ce
-      become: yes
-    - apt: name=docker-ce-cli
-      become: yes
-    - apt: name=containerd.io
-      become: yes
     - group: name=docker
       become: yes
     - user:
@@ -82,7 +85,6 @@
       become: yes
 
     # Setup Git
-    - apt: name=git
     - command: git config credential.helper store
     - command: git config --global credential.helper 'cache --timeout 7200'
     - file:
