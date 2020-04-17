@@ -62,7 +62,7 @@
         state: directory
     - git:
         repo: https://github.com/dmccue/hotwire
-        dest: "{{ ansible_user_dir }}/deploy"
+        dest: "{{ ansible_user_dir }}/deploy/hotwire"
       
     # - name: "just execute a ls -lrt command"
     #  shell: "ls -lrt"
