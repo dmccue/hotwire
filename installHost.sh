@@ -1,11 +1,11 @@
 #!/bin/bash
 
-lsb_release -r | grep 18.04 || exit 1
+#lsb_release -r | grep 18.04 || exit 1
 
 
 sudo apt install -y ansible
-curl -L https://raw.githubusercontent.com/dmccue/hotwire/master/playbook.yml -o /root/playbook.yml
-ansible-playbook /root/playbook.yml
+sudo curl -L https://raw.githubusercontent.com/dmccue/hotwire/master/playbook.yml -o /root/playbook.yml
+sudo ansible-playbook /root/playbook.yml
 
 # Create swapfile
 sudo swapon --show | grep file || {
@@ -17,31 +17,31 @@ sudo swapon --show | grep file || {
 }
 
 # Setup SSH
-sudo sed -i 's/^PasswordAuthentication/#PasswordAuthentication/' /etc/ssh/sshd_config
-sudo service sshd restart
+#sudo sed -i 's/^PasswordAuthentication/#PasswordAuthentication/' /etc/ssh/sshd_config
+#sudo service sshd restart
 
 
 # Disable systemd resolver proxy 
-sudo systemctl disable systemd-resolved.service
-sudo service systemd-resolved stop
-sudo rm /etc/resolv.conf
-echo "nameserver 172.26.0.2
-nameserver 1.1.1.1
-search eu-west-2.compute.internal" | sudo tee /etc/resolv.conf >/dev/null
+#sudo systemctl disable systemd-resolved.service
+#sudo service systemd-resolved stop
+#sudo rm /etc/resolv.conf
+#echo "nameserver 172.26.0.2
+#nameserver 1.1.1.1
+#search eu-west-2.compute.internal" | sudo tee /etc/resolv.conf >/dev/null
 
 
 # Install Docker
-which docker || {
-  sudo apt remove -y docker docker-engine docker.io containerd runc
-  sudo apt update
-  sudo apt install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  sudo apt update
-  sudo apt install -y docker-ce docker-ce-cli containerd.io
-  sudo groupadd docker
-  sudo usermod -aG docker ubuntu
-}
+#which docker || {
+#  sudo apt remove -y docker docker-engine docker.io containerd runc
+#  sudo apt update
+#  sudo apt install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+#  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+#  sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+#  sudo apt update
+#  sudo apt install -y docker-ce docker-ce-cli containerd.io
+#  sudo groupadd docker
+#  sudo usermod -aG docker ubuntu
+#}
 
 # Install Docker Compose
 which docker-compose || {
