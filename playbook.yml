@@ -7,12 +7,13 @@
       - wireguard
       - docker-ce
       - docker-ce-cli
+      - docker-compose
       - containerd.io
       - git 
 
     tasks:
     # Install packages
-    - apt: name={{ pkgs }}
+    - apt: name={{ pkgs }} state=latest
       become: yes
 
     # Setup swapspace
