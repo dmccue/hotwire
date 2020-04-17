@@ -18,8 +18,7 @@ jobs:
     name: Build and Run
     runs-on: ubuntu-latest
     steps:
-    #- name: List installed software on github image
-    #  run: apt list --installed
+
 
     - name: recreate deploy repo via ssh
       uses: appleboy/ssh-action@master
@@ -40,6 +39,21 @@ jobs:
           echo hostname: $(hostname -s)
           echo epoch: $(date +%s)
           echo pwd: $(pwd)
+
+    - name: Run ansible deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        script: |
+          cd ~/deploy/hotwire &&
+          ansible-playbook -v playbook.yml
+
+          echo hostname: $(hostname -s)
+          echo epoch: $(date +%s)
+          echo pwd: $(pwd)
+
 
     - name: LINT test Dockerfiles via ssh
       uses: appleboy/ssh-action@master
