@@ -1,0 +1,11 @@
+---
+  - name: "Setup docker host - ubuntu 18.04 LTS"
+    hosts: localhost
+    connection: local 
+    tasks:
+
+    - name: "just execute a ls -lrt command"
+      shell: "ls -lrt"
+      register: "output"
+
+    - debug: var=output.stdout_lines

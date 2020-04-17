@@ -3,6 +3,10 @@
 lsb_release -r | grep 18.04 || exit 1
 
 
+sudo apt install -y ansible
+curl -L https://raw.githubusercontent.com/dmccue/hotwire/master/playbook.yml -o /root/playbook.yml
+ansible-playbook /root/playbook.yml
+
 # Create swapfile
 sudo swapon --show | grep file || {
   fallocate -l 1G /swapfile
