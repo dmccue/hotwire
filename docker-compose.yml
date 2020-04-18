@@ -14,7 +14,6 @@ services:
 
       
   httpd:
-    hostname: httpd
     build: ./app-httpd
     ports:
     - "80/tcp"
@@ -29,7 +28,6 @@ services:
 
 
   wireguard:
-    hostname: wireguard
     build: ./app-wireguard
     ports:
       - "51820:51820/udp"
@@ -50,13 +48,12 @@ services:
  
 
   pihole:
-    hostname: pihole
     #image: pihole/pihole
     build: ./app-pihole
     #dns:
     #- 127.0.0.11
-    #ports:
-    #- "53/udp"
+    ports:
+    - "53/udp"
     #- "53:53/udp" #This breaks docker resolution
     #- "80/tcp"
     #- "443/tcp"
@@ -73,9 +70,9 @@ services:
       DNS2: 1.0.0.2
       WEBPASSWORD: PiHole123
     networks:
-    - backend
-    #  backend:
-    #    ipv4_address: 172.21.0.9 
+            #- backend
+      backend:
+        ipv4_address: 172.21.0.2 
     healthcheck:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null && nc -z localhost 53 && nc -zu localhost 53
 
