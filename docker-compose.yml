@@ -20,7 +20,7 @@ services:
     volumes:
     - ./app-httpd/htdocs:/usr/local/apache2/htdocs
     dns:
-    - 172.21.0.2 
+    - 172.21.1.1 
     networks:
     - backend 
     healthcheck:
@@ -32,7 +32,7 @@ services:
     ports:
       - "51820:51820/udp"
     dns:
-      - 172.21.0.2
+      - 172.21.1.1
     volumes:
       - /data/wireguard:/etc/wireguard
       - /var/lib/dkms/wireguard:/var/lib/dkms/wireguard
@@ -62,6 +62,7 @@ services:
     #- /data/app-pihole/etc-dnsmasq.d:/etc/dnsmasq.d
     #- /data/app-pihole/etc-pihole:/etc/pihole
     environment:
+      ServerIP: 172.21.1.1
       TZ: Europe/London
       DNSMASQ_LISTENING: local
       IPv6: 'False'
@@ -69,10 +70,15 @@ services:
       DNS1: 1.1.1.2
       DNS2: 1.0.0.2
       WEBPASSWORD: PiHole123
+      DNS_BOGUS_PRIV: 'True'
+      CONDITIONAL_FORWARDING: 'True'
+      CONDITIONAL_FORWARDING_IP: 172.21.0.1
+      CONDITIONAL_FORWARDING_DOMAIN: 'localdomain'
+      CONDITIONAL_FORWARDING_REVERSE: '0.21.172.in-addr.arpa'
     networks:
             #- backend
       backend:
-        ipv4_address: 172.21.0.2 
+        ipv4_address: 172.21.1.1 
     healthcheck:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null && nc -z localhost 53 && nc -zu localhost 53
 
