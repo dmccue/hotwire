@@ -19,8 +19,8 @@ RUN apt-get update && \
 ADD wgsetup.sh /etc/wireguard_setup/wgsetup.sh
 
 CMD bash /etc/wireguard_setup/wgsetup.sh && \
-    echo "Starting CMD:" && \
-    wg-quick up /etc/wireguard/wghub.conf && \
-    wg show all && \
+    echo "Starting CMD:"; \
+    wg-quick up /etc/wireguard/wghub.conf; \
+    wg show all; \
     echo "Starting Sleep:" && \
     sleep infinity
