@@ -38,6 +38,7 @@ services:
       - /var/lib/dkms/wireguard:/var/lib/dkms/wireguard
       - /usr/src:/usr/src:ro
       - /lib/modules:/lib/modules
+      - /proc/net:/proc/net
     cap_add:
       - NET_ADMIN
       - SYS_MODULE

@@ -3,10 +3,21 @@
 echo Starting wireguard setup
 
 WGPort=51820
-WGPrivateKey="kBuNNyp+4tOr+YTDufP9Ss3+loJJ6i5ipC2NGoKyi1Y="
-Client1PublicKey="JQ7dnj13Vb2L+CyhSt+fiHmizyzwbhJTyUX9dV4MrAE="
-Client1PreSharedKey="2YSa1Q2buWwNQKJonAuJJ4jIsSuuPkul3qt+9cUn9p0="
 
+WGPreSharedKey="2YSa1Q2buWwNQKJonAuJJ4jIsSuuPkul3qt+9cUn9p0="
+
+WGPrivateKey="kBuNNyp+4tOr+YTDufP9Ss3+loJJ6i5ipC2NGoKyi1Y=" #wg genkey
+WGPublicKey=$(echo "$WGPrivateKey" | wg pubkey)
+#Tj9oDvIv51C3zBBB2cpt53bJGizgTyFXiIf/V3iQWlA=
+
+Client1PrivateKey="eGLUIOFmjBTt652hC3yO4jdfOuLn3oOKiyxWVmj5Ul4=" #wg genkey
+Client1PublicKey=$(echo "$Client1PrivateKey" | wg pubkey)
+#JQ7dnj13Vb2L+CyhSt+fiHmizyzwbhJTyUX9dV4MrAE=
+
+
+
+
+umask 077
 
 cat <<EOF > /etc/wireguard/wghub.conf
 [Interface]
@@ -36,9 +47,21 @@ PostDown = ip6tables -t mangle -D POSTROUTING -p tcp --tcp-flags SYN,RST SYN -o 
 # 10: 10 > wgclient_10.conf
 [Peer]
 PublicKey = $Client1PublicKey
-PresharedKey = $Client1PreSharedKey
+PresharedKey = $WGPreSharedKey
 AllowedIPs = 10.127.0.10/32
 EOF
 
+cat <<EOF > /etc/wireguard/wgclient_10.conf
+[Interface]
+Address = 10.127.0.10/24
+DNS = 10.127.1.1
+PrivateKey = $Client1PrivateKey
+
+[Peer]
+PublicKey = $WGPublicKey
+PresharedKey = $WGPreSharedKey
+AllowedIPs = 0.0.0.0/0, ::/0
+Endpoint = 18.130.206.143:$WGPort
+EOF
 
 echo Finished wireguard setup
