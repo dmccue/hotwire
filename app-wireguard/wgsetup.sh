@@ -32,8 +32,8 @@ PostUp = iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 PostUp = ip6tables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 PostUp = iptables -A FORWARD -i %i -j ACCEPT
 PostUp = ip6tables -A FORWARD -i %i -j ACCEPT
-PostUp = sysctl -q -w net.ipv4.ip_forward=1
-PostUp = sysctl -q -w net.ipv6.conf.all.forwarding=1
+#PostUp = sysctl -q -w net.ipv4.ip_forward=1
+#PostUp = sysctl -q -w net.ipv6.conf.all.forwarding=1
 
 #PostDown = sysctl -q -w net.ipv4.ip_forward=0
 #PostDown = sysctl -q -w net.ipv6.conf.all.forwarding=0
@@ -54,7 +54,7 @@ EOF
 cat <<EOF > /etc/wireguard/wgclient_10.conf
 [Interface]
 Address = 10.127.0.10/24
-DNS = 10.127.1.1
+DNS = 10.127.1.1, 1.1.1.1
 PrivateKey = $Client1PrivateKey
 
 [Peer]
