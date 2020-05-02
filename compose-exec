@@ -1,3 +1,4 @@
 #!/bin/bash
 
+echo Running: "docker exec -it hotwire_$1_1 /bin/bash"
 docker exec -it hotwire_$1_1 /bin/bash

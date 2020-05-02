@@ -14,7 +14,6 @@ Client1PrivateKey=$(wg genkey)
 Client1PublicKey=$(echo "$Client1PrivateKey" | wg pubkey)
 
 
-
 umask 077
 
 cat <<EOF > /etc/wireguard/wghub.conf
@@ -69,3 +68,8 @@ echo DEBUG: wgclient_10.conf
 cat /etc/wireguard/wgclient_10.conf
 
 echo Finished wireguard setup
+
+echo
+echo DEBUG: Wireguard Client QRCode
+echo
+cat /etc/wireguard/wgclient_10.conf | qrencode -t ansiutf8

@@ -98,6 +98,8 @@ services:
       - /data/shared:/shared
     environment:
       - TZ=Europe/London
+    healthcheck:
+      test: curl http://localhost:9000
     networks:
       - backend
 # docker container create --name="portainer" \
