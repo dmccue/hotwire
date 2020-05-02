@@ -2,18 +2,19 @@
 
 echo Starting wireguard setup
 
+WGExternalIP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 WGPort=51820
 
 WGPreSharedKey="2YSa1Q2buWwNQKJonAuJJ4jIsSuuPkul3qt+9cUn9p0="
 
 WGPrivateKey="kBuNNyp+4tOr+YTDufP9Ss3+loJJ6i5ipC2NGoKyi1Y=" #wg genkey
+#Pub: Tj9oDvIv51C3zBBB2cpt53bJGizgTyFXiIf/V3iQWlA=
 WGPublicKey=$(echo "$WGPrivateKey" | wg pubkey)
-#Tj9oDvIv51C3zBBB2cpt53bJGizgTyFXiIf/V3iQWlA=
+
 
 Client1PrivateKey="eGLUIOFmjBTt652hC3yO4jdfOuLn3oOKiyxWVmj5Ul4=" #wg genkey
+#Pub: JQ7dnj13Vb2L+CyhSt+fiHmizyzwbhJTyUX9dV4MrAE=
 Client1PublicKey=$(echo "$Client1PrivateKey" | wg pubkey)
-#JQ7dnj13Vb2L+CyhSt+fiHmizyzwbhJTyUX9dV4MrAE=
-
 
 
 
@@ -61,7 +62,13 @@ PrivateKey = $Client1PrivateKey
 PublicKey = $WGPublicKey
 PresharedKey = $WGPreSharedKey
 AllowedIPs = 0.0.0.0/0, ::/0
-Endpoint = 18.130.206.143:$WGPort
+Endpoint = $WGExternalIP:$WGPort
 EOF
+
+echo DEBUG: wghub.conf
+cat /etc/wireguard/wghub.conf
+
+echo DEBUG: wgclient_10.conf
+cat /etc/wireguard/wgclient_10.conf
 
 echo Finished wireguard setup

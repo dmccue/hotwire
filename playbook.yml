@@ -10,7 +10,7 @@
         #- docker-ce-cli
       - docker-compose
         #- containerd.io
-      - git 
+      - git
 
     tasks:
     # Install packages
@@ -48,8 +48,20 @@
     # Install wireguard
     - modprobe: name=wireguard
       become: yes
-   
-    # sshd setup 
+    - sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        sysctl_set: yes
+      become: yes
+    - sysctl:
+        name: net.ipv6.conf.all.forwarding
+        value: '1'
+        sysctl_set: yes
+      become: yes
+
+
+
+    # sshd setup
     - command: sed -i 's/^[#]*PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
       become: yes
     - service: name=sshd state=reloaded
@@ -62,12 +74,12 @@
     - service: name=systemd-resolved state=stopped
       become: yes
 
-    - command: | 
+    - command: |
         echo "nameserver 172.26.0.2
         nameserver 1.1.1.1
         search eu-west-2.compute.internal"
       register: dnsoutput
-    - copy: content={{ dnsoutput.stdout }} dest=/etc/resolv.conf 
+    - copy: content={{ dnsoutput.stdout }} dest=/etc/resolv.conf
       become: yes
 
 
@@ -100,10 +112,10 @@
     - uri:
         url: http://ifconfig.me/ip
         return_content: yes
-      register: diag 
+      register: diag
 
     - copy: content={{ diag.content }} dest=/root/diag_externalip
-      become: yes 
+      become: yes
 
     # - name: "just execute a ls -lrt command"
     #  shell: "ls -lrt"
