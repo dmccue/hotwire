@@ -28,7 +28,7 @@ services:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
+      - "traefik.http.routers.whoami.rule=Host(`${FQDN}`)"
       - "traefik.http.routers.whoami.entrypoints=web"
 
   wireguard:
@@ -89,9 +89,10 @@ services:
 
   traefik:
     image: "traefik:latest"
+    restart: always
     container_name: "traefik"
     command:
-      #- "--log.level=DEBUG"
+      - "--log.level=DEBUG" # can comment this out
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -101,6 +102,7 @@ services:
       - "8080:8080"
     networks:
       - backend
+      - default
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 

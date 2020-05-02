@@ -80,11 +80,11 @@ jobs:
           cd ~/deploy/hotwire && \
           echo Compose Build && \
           docker-compose build --pull || { echo Error: build unsuccessful - exit code $?; docker info; exit 1; }
-          
+
           echo hostname: $(hostname -s)
           echo epoch: $(date +%s)
           echo pwd: $(pwd)
-          
+
 
     - name: execute compose RUN script via ssh
       uses: appleboy/ssh-action@master
@@ -95,10 +95,10 @@ jobs:
         script: |
           cd ~/deploy/hotwire
           echo Compose Up && \
-          docker-compose up -d --force-recreate || { echo Error: compose up failed - exit code $?; docker-compose ps; exit 1; }
+          docker-compose up -e FQDN=$(curl http://169.254.169.254/latest/meta-data/public-hostname) -d --force-recreate || { echo Error: compose up failed - exit code $?; docker-compose ps; exit 1; }
           echo Compose ps && \
           docker-compose ps
-          
+
           echo hostname: $(hostname -s)
           echo epoch: $(date +%s)
           echo pwd: $(pwd)
@@ -116,4 +116,3 @@ jobs:
 #      run: |
 #        echo Add other actions to build,
 #        echo test, and deploy your project.
-

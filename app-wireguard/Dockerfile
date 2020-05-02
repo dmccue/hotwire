@@ -5,14 +5,14 @@ RUN apt-get update && \
     apt-get clean
 
 RUN apt-get update && \
-    apt-get install -y netcat net-tools curl wireguard && \
+    apt-get install -y netcat net-tools curl wireguard qrencode && \
     apt-get clean
 
 ADD wgsetup.sh /etc/wireguard_setup/wgsetup.sh
 
 CMD bash /etc/wireguard_setup/wgsetup.sh && \
-    echo "Starting CMD:"; \
+    echo "DEBUG: Starting wireguard CMD"; \
     wg-quick up /etc/wireguard/wghub.conf; \
     wg show all; \
-    echo "Starting Sleep:" && \
+    echo "DEBUG: Starting Sleep" && \
     sleep infinity
