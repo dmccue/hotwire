@@ -5,15 +5,12 @@ echo Starting wireguard setup
 WGExternalIP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 WGPort=51820
 
-WGPreSharedKey="2YSa1Q2buWwNQKJonAuJJ4jIsSuuPkul3qt+9cUn9p0="
+WGPreSharedKey=$(wg genkey)
 
-WGPrivateKey="kBuNNyp+4tOr+YTDufP9Ss3+loJJ6i5ipC2NGoKyi1Y=" #wg genkey
-#Pub: Tj9oDvIv51C3zBBB2cpt53bJGizgTyFXiIf/V3iQWlA=
+WGPrivateKey=$(wg genkey)
 WGPublicKey=$(echo "$WGPrivateKey" | wg pubkey)
 
-
-Client1PrivateKey="eGLUIOFmjBTt652hC3yO4jdfOuLn3oOKiyxWVmj5Ul4=" #wg genkey
-#Pub: JQ7dnj13Vb2L+CyhSt+fiHmizyzwbhJTyUX9dV4MrAE=
+Client1PrivateKey=$(wg genkey)
 Client1PublicKey=$(echo "$Client1PrivateKey" | wg pubkey)
 
 

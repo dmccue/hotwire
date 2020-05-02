@@ -5,7 +5,7 @@ RUN apt-get update && \
     apt-get clean
 
 RUN apt-get update && \
-    apt-get install -y netcat net-tools wireguard && \
+    apt-get install -y netcat net-tools curl wireguard && \
     apt-get clean
 
 ADD wgsetup.sh /etc/wireguard_setup/wgsetup.sh
