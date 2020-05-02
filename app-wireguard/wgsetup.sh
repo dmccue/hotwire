@@ -3,6 +3,7 @@
 echo Starting wireguard setup
 
 WGExternalIP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
+WGExternalHostname=$(curl http://169.254.169.254/latest/meta-data/public-hostname)
 WGPort=51820
 
 WGPreSharedKey=$(wg genkey)
@@ -53,12 +54,12 @@ cat <<EOF > /etc/wireguard/wgclient_10.conf
 Address = 10.127.0.10/24
 DNS = 10.127.1.1, 1.1.1.1
 PrivateKey = $Client1PrivateKey
-
+$
 [Peer]
 PublicKey = $WGPublicKey
 PresharedKey = $WGPreSharedKey
 AllowedIPs = 0.0.0.0/0, ::/0
-Endpoint = $WGExternalIP:$WGPort
+Endpoint = $WGExternalHostname:$WGPort
 EOF
 
 echo DEBUG: wghub.conf
