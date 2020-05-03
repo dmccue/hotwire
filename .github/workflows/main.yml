@@ -22,10 +22,13 @@ jobs:
 
     - name: recreate deploy repo via ssh
       uses: appleboy/ssh-action@master
+      env:
+        FQDN: localhost
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
+
         script: |
           if [ -d ~/deploy/hotwire/ ]; then
             cd ~/deploy/hotwire && docker-compose down && sudo rm -rf ~/deploy/hotwire
@@ -42,6 +45,8 @@ jobs:
 
     - name: Run ansible deploy
       uses: appleboy/ssh-action@master
+      env:
+        FQDN: localhost
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
@@ -57,6 +62,8 @@ jobs:
 
     - name: LINT test Dockerfiles via ssh
       uses: appleboy/ssh-action@master
+      env:
+        FQDN: localhost
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
@@ -72,6 +79,8 @@ jobs:
 
     - name: execute compose BUILD script via ssh
       uses: appleboy/ssh-action@master
+      env:
+        FQDN: localhost
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
@@ -88,6 +97,8 @@ jobs:
 
     - name: execute compose RUN script via ssh
       uses: appleboy/ssh-action@master
+      env:
+        FQDN: localhost
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
