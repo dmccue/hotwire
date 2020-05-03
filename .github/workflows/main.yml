@@ -22,8 +22,6 @@ jobs:
 
     - name: recreate deploy repo via ssh
       uses: appleboy/ssh-action@master
-      env:
-        FQDN: localhost
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
@@ -36,8 +34,6 @@ jobs:
           fi
           mkdir -p ~/deploy && cd ~/deploy
           git clone https://github.com/dmccue/hotwire.git hotwire && cd hotwire || { echo Error encountered - exit code $?; exit 1; }
-          echo Compose Down && \
-          docker-compose down || { echo Error with compose down - exit code $?; exit 1; }
 
           echo hostname: $(hostname -s)
           echo epoch: $(date +%s)
@@ -45,8 +41,6 @@ jobs:
 
     - name: Run ansible deploy
       uses: appleboy/ssh-action@master
-      env:
-        FQDN: localhost
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
@@ -62,8 +56,6 @@ jobs:
 
     - name: LINT test Dockerfiles via ssh
       uses: appleboy/ssh-action@master
-      env:
-        FQDN: localhost
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
@@ -105,8 +97,11 @@ jobs:
         key: ${{ secrets.KEY }}
         script: |
           cd ~/deploy/hotwire
+          echo Compose Down && \
+          docker-compose down || { echo Error: compose down failed - exit code $?; exit 1; }
+
           echo Compose Up && \
-          export FQDN=$(curl http://169.254.169.254/latest/meta-data/public-hostname); \
+          export FQDN=$(curl http://169.254.169.254/latest/meta-data/public-hostname) && \
           docker-compose up -d --force-recreate || { echo Error: compose up failed - exit code $?; docker-compose ps; exit 1; }
           echo Compose ps && \
           docker-compose ps
