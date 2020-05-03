@@ -105,6 +105,10 @@ services:
       - default
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=\"Host(`${FQDN}`)  && Path(`/portainer`)\""
+      - "traefik.http.routers.whoami.entrypoints=web"
 
   portainer:
     image: portainer/portainer
