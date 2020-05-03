@@ -71,8 +71,6 @@ jobs:
 
     - name: execute compose BUILD script via ssh
       uses: appleboy/ssh-action@master
-      env:
-        FQDN: localhost
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
@@ -89,8 +87,6 @@ jobs:
 
     - name: execute compose RUN script via ssh
       uses: appleboy/ssh-action@master
-      env:
-        FQDN: localhost
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}

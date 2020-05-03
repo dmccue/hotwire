@@ -28,7 +28,7 @@ services:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule="(Host(`${FQDN}`)  && Path(`/httpd`))"
+      - "traefik.http.routers.whoami.rule=(Host(`${FQDN}`)  && Path(`/httpd`))"
       - "traefik.http.routers.whoami.entrypoints=web"
 
   wireguard:
@@ -88,7 +88,7 @@ services:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null && nc -z localhost 53 && nc -zu localhost 53
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule="(Host(`${FQDN}`)  && Path(`/pihole`))"
+      - "traefik.http.routers.whoami.rule=(Host(`${FQDN}`)  && Path(`/pihole`))"
       - "traefik.http.routers.whoami.entrypoints=web"
 
   traefik:
@@ -127,7 +127,7 @@ services:
       test: curl http://localhost:9000
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule="(Host(`${FQDN}`)  && Path(`/portainer`))"
+      - "traefik.http.routers.whoami.rule=(Host(`${FQDN}`)  && Path(`/portainer`))"
       - "traefik.http.routers.whoami.entrypoints=web"
     networks:
       - backend
