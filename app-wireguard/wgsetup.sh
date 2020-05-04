@@ -6,7 +6,7 @@ WGExternalIP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 WGExternalHostname=$(curl http://169.254.169.254/latest/meta-data/public-hostname)
 WGPort=51820
 
-WGPreSharedKey=$(wg genkey)
+WGPreSharedKey=$(wg genpsk)
 
 WGPrivateKey=$(wg genkey)
 WGPublicKey=$(echo $WGPrivateKey | wg pubkey)
@@ -45,7 +45,7 @@ PostDown = ip6tables -t mangle -D POSTROUTING -p tcp --tcp-flags SYN,RST SYN -o 
 # 10: 10 > wgclient_10.conf
 [Peer]
 PublicKey = $Client1PublicKey
-#PresharedKey = $WGPreSharedKey
+PresharedKey = $WGPreSharedKey
 AllowedIPs = 10.127.0.10/32
 EOF
 
@@ -57,9 +57,9 @@ PrivateKey = $Client1PrivateKey
 
 [Peer]
 PublicKey = $WGPublicKey
-#PresharedKey = $WGPreSharedKey
+PresharedKey = $WGPreSharedKey
 AllowedIPs = 0.0.0.0/0, ::/0
-Endpoint = $WGExternalIP:$WGPort
+Endpoint = $WGExternalHostname:$WGPort
 EOF
 
 echo DEBUG: wghub.conf
