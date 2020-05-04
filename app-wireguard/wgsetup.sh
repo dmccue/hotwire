@@ -45,7 +45,7 @@ PostDown = ip6tables -t mangle -D POSTROUTING -p tcp --tcp-flags SYN,RST SYN -o 
 # 10: 10 > wgclient_10.conf
 [Peer]
 PublicKey = $Client1PublicKey
-#PresharedKey = $WGPreSharedKey
+PresharedKey = $WGPreSharedKey
 AllowedIPs = 10.127.0.10/32
 EOF
 
@@ -57,9 +57,8 @@ PrivateKey = $Client1PrivateKey
 
 [Peer]
 PublicKey = $WGPublicKey
-#PresharedKey = $WGPreSharedKey
-AllowedIPs = 0.0.0.0/0
-#, ::/0
+PresharedKey = $WGPreSharedKey
+AllowedIPs = 0.0.0.0/0, ::/0
 Endpoint = $WGExternalHostname:$WGPort
 EOF
 
