@@ -28,8 +28,8 @@ services:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=(Host(`${FQDN}`)  && Path(`/httpd`))"
-      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.httpd.rule=(Host(`${FQDN}`)  && Path(`/httpd`))"
+      - "traefik.http.routers.httpd.entrypoints=web"
 
   wireguard:
     build: ./app-wireguard
@@ -88,8 +88,8 @@ services:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null && nc -z localhost 53 && nc -zu localhost 53
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=(Host(`${FQDN}`)  && Path(`/pihole`))"
-      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.pihole.rule=(Host(`${FQDN}`)  && Path(`/pihole`))"
+      - "traefik.http.routers.pihole.entrypoints=web"
 
   traefik:
     image: "traefik:latest"
@@ -127,8 +127,8 @@ services:
       test: curl http://localhost:9000
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=(Host(`${FQDN}`)  && Path(`/portainer`))"
-      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.portainer.rule=(Host(`${FQDN}`)  && Path(`/portainer`))"
+      - "traefik.http.routers.portainer.entrypoints=web"
     networks:
       - backend
 # docker container create --name="portainer" \
