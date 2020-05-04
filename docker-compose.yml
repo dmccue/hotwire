@@ -36,7 +36,6 @@ services:
     dns:
       - 172.21.1.1
     volumes:
-      - /data/wireguard:/etc/wireguard
       - /var/lib/dkms/wireguard:/var/lib/dkms/wireguard
       - /usr/src:/usr/src:ro
       - /lib/modules:/lib/modules

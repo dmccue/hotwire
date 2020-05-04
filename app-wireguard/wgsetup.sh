@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-echo Starting wireguard setup
-
 WGExternalIP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 WGExternalHostname=$(curl http://169.254.169.254/latest/meta-data/public-hostname)
 WGPort=51820
@@ -14,10 +12,13 @@ WGPublicKey=$(echo $WGPrivateKey | wg pubkey)
 Client1PrivateKey=$(wg genkey)
 Client1PublicKey=$(echo $Client1PrivateKey | wg pubkey)
 
-
 umask 077
+mkdir -p /etc/wireguard
 
-cat <<EOF > /etc/wireguard/wghub.conf
+
+echo Info: Starting wireguard setup
+echo
+cat <<EOF > /etc/wireguard/wg0.conf
 [Interface]
 Address = 10.127.0.1/24
 ListenPort = $WGPort
@@ -48,11 +49,12 @@ PublicKey = $Client1PublicKey
 PresharedKey = $WGPreSharedKey
 AllowedIPs = 10.127.0.10/32
 EOF
-
+echo
+echo
 cat <<EOF > /etc/wireguard/wgclient_10.conf
 [Interface]
 Address = 10.127.0.10/24
-DNS = 10.127.1.1, 1.1.1.1
+DNS = 172.21.1.1, 1.1.1.1
 PrivateKey = $Client1PrivateKey
 
 [Peer]
@@ -61,15 +63,14 @@ PresharedKey = $WGPreSharedKey
 AllowedIPs = 0.0.0.0/0, ::/0
 Endpoint = $WGExternalHostname:$WGPort
 EOF
-
-echo DEBUG: wghub.conf
-cat /etc/wireguard/wghub.conf
-
+echo
+echo DEBUG: wg0.conf
+cat /etc/wireguard/wg0.conf
+echo
 echo DEBUG: wgclient_10.conf
 cat /etc/wireguard/wgclient_10.conf
-
-echo Finished wireguard setup
-
+echo
+echo Info: Finished wireguard setup
 echo
 echo DEBUG: Wireguard Client QRCode
 echo

@@ -1,18 +1,15 @@
 FROM ubuntu:20.04
 
 RUN apt-get update && \
-    apt-get install -y netcat dnsutils iptables iproute2 gnupg && \
-    apt-get clean
+    apt-get install -y dnsutils iptables iproute2 gnupg netcat net-tools curl wireguard qrencode && \
+    apt-get clean; \
+    mkdir -p /etc/wireguard
 
-RUN apt-get update && \
-    apt-get install -y netcat net-tools curl wireguard qrencode && \
-    apt-get clean
+ADD wgsetup.sh /etc/wireguard/wgsetup.sh
 
-ADD wgsetup.sh /root/wireguard_setup/wgsetup.sh
-
-CMD bash /root/wireguard_setup/wgsetup.sh && \
-    echo "DEBUG: Starting wireguard CMD"; \
-    wg-quick up /etc/wireguard/wghub.conf; \
+CMD bash /etc/wireguard/wgsetup.sh && \
+    echo "DEBUG: Starting wireguard CMD" && \
+    wg-quick up /etc/wireguard/wg0.conf; \
     wg show all; \
     echo "DEBUG: Starting Sleep" && \
     sleep infinity
