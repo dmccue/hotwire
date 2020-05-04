@@ -8,9 +8,9 @@ RUN apt-get update && \
     apt-get install -y netcat net-tools curl wireguard qrencode && \
     apt-get clean
 
-ADD wgsetup.sh /etc/wireguard_setup/wgsetup.sh
+ADD wgsetup.sh /etc/wireguard/wgsetup.sh
 
-CMD bash /etc/wireguard_setup/wgsetup.sh && \
+CMD bash /etc/wireguard/wgsetup.sh && \
     echo "DEBUG: Starting wireguard CMD"; \
     wg-quick up /etc/wireguard/wghub.conf; \
     wg show all; \

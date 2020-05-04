@@ -52,9 +52,9 @@ EOF
 cat <<EOF > /etc/wireguard/wgclient_10.conf
 [Interface]
 Address = 10.127.0.10/24
-DNS = 10.127.1.1
+DNS = 10.127.1.1, 1.1.1.1
 PrivateKey = $Client1PrivateKey
-$
+
 [Peer]
 PublicKey = $WGPublicKey
 PresharedKey = $WGPreSharedKey
