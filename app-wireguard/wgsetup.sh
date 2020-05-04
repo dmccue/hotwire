@@ -9,10 +9,10 @@ WGPort=51820
 WGPreSharedKey=$(wg genkey)
 
 WGPrivateKey=$(wg genkey)
-WGPublicKey=$(echo "$WGPrivateKey" | wg pubkey)
+WGPublicKey=$(echo $WGPrivateKey | wg pubkey)
 
 Client1PrivateKey=$(wg genkey)
-Client1PublicKey=$(echo "$Client1PrivateKey" | wg pubkey)
+Client1PublicKey=$(echo $Client1PrivateKey | wg pubkey)
 
 
 umask 077
