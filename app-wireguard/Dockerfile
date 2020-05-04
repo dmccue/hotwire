@@ -1,9 +1,11 @@
 FROM ubuntu:20.04
 
-RUN apt-get update && \
+RUN export DEBIAN_FRONTEND=noninteractive; \
+    apt-get update && \
     apt-get install -y dnsutils iptables iproute2 gnupg netcat net-tools curl wireguard qrencode && \
     apt-get clean; \
-    mkdir -p /etc/wireguard
+    mkdir -p /etc/wireguard; \
+    unset DEBIAN_FRONTEND
 
 ADD wgsetup.sh /etc/wireguard/wgsetup.sh
 
