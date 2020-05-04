@@ -59,7 +59,7 @@ PrivateKey = $Client1PrivateKey
 PublicKey = $WGPublicKey
 PresharedKey = $WGPreSharedKey
 AllowedIPs = 0.0.0.0/0, ::/0
-Endpoint = $WGExternalHostname:$WGPort
+Endpoint = $WGExternalIP:$WGPort
 EOF
 
 echo DEBUG: wghub.conf
