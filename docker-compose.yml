@@ -69,8 +69,8 @@ services:
       DNSMASQ_LISTENING: local
       IPv6: 'False'
       DNSSEC: 'True'
-      DNS1: 1.1.1.2
-      DNS2: 1.1.1.1
+      DNS1: 1.0.0.2
+      DNS2: 1.1.1.2
       WEBPASSWORD: PiHole123
       DNS_BOGUS_PRIV: 'True'
       CONDITIONAL_FORWARDING: 'True'
