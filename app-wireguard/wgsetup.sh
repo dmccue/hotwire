@@ -64,7 +64,7 @@ PostDown = ip6tables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
 PostDown = iptables -t mangle -D POSTROUTING -p tcp --tcp-flags SYN,RST SYN -o eth0 -j TCPMSS --clamp-mss-to-pmtu
 PostDown = ip6tables -t mangle -D POSTROUTING -p tcp --tcp-flags SYN,RST SYN -o eth0 -j TCPMSS --clamp-mss-to-pmtu
 
-# 10: 10 > wgclient_10.conf
+# 10: 10 > client10.conf
 [Peer]
 PublicKey = $Client10PublicKey
 PresharedKey = $WGPreSharedKey
@@ -72,7 +72,7 @@ AllowedIPs = 10.127.0.10/32
 EOF
 echo
 echo
-cat <<EOF > /etc/wireguard/client_10.conf
+cat <<EOF > /etc/wireguard/client10.conf
 [Interface]
 Address = 10.127.0.10/24
 DNS = 172.21.1.1, 1.1.1.2
@@ -88,11 +88,11 @@ echo
 echo DEBUG: wg0.conf
 cat /etc/wireguard/wg0.conf
 echo
-echo DEBUG: wgclient_10.conf
-cat /etc/wireguard/client_10.conf
+echo DEBUG: client10.conf
+cat /etc/wireguard/client10.conf
 echo
 echo Info: Finished wireguard setup
 echo
 echo DEBUG: Wireguard Client QRCode
 echo
-cat /etc/wireguard/client_10.conf | qrencode -t ansiutf8
+cat /etc/wireguard/client10.conf | qrencode -t ansiutf8
