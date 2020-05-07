@@ -1,20 +1,41 @@
 #!/usr/bin/env bash
 
+umask 077
+
 WGExternalIP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 WGExternalHostname=$(curl http://169.254.169.254/latest/meta-data/public-hostname)
 WGPort=51820
+ClientIncrementer=10
+ClientCount=1
 
-WGPreSharedKey=$(wg genpsk)
+# Generate server preshared key
+if [ ! -f /etc/wireguard/psk.key ]; then
+  WGPreSharedKey=$(wg genpsk)
+  echo $WGPreSharedKey > /etc/wireguard/psk.key
+else
+  WGPreSharedKey=$(cat /etc/wireguard/psk.key)
+fi
 
-WGPrivateKey=$(wg genkey)
+# Generate server private key
+if [ ! -f /etc/wireguard/private.key ]; then
+  WGPrivateKey=$(wg genkey)
+  echo $WGPrivateKey > /etc/wireguard/private.key
+else
+  WGPrivateKey=$(cat /etc/wireguard/private.key)
+fi
 WGPublicKey=$(echo $WGPrivateKey | wg pubkey)
 
-Client1PrivateKey=$(wg genkey)
-Client1PublicKey=$(echo $Client1PrivateKey | wg pubkey)
+# Generate client10 private key
+if [ ! -f /etc/wireguard/client10.key ]; then
+  Client10PrivateKey=$(wg genkey)
+  echo $Client10PrivateKey > /etc/wireguard/client10.key
+else
+  Client10PrivateKey=$(cat /etc/wireguard/client10.key)
+fi
+Client10PublicKey=$(echo $Client10PrivateKey | wg pubkey)
 
-umask 077
+
 mkdir -p /etc/wireguard
-
 
 echo Info: Starting wireguard setup
 echo
@@ -45,17 +66,17 @@ PostDown = ip6tables -t mangle -D POSTROUTING -p tcp --tcp-flags SYN,RST SYN -o 
 
 # 10: 10 > wgclient_10.conf
 [Peer]
-PublicKey = $Client1PublicKey
+PublicKey = $Client10PublicKey
 PresharedKey = $WGPreSharedKey
 AllowedIPs = 10.127.0.10/32
 EOF
 echo
 echo
-cat <<EOF > /etc/wireguard/wgclient_10.conf
+cat <<EOF > /etc/wireguard/client_10.conf
 [Interface]
 Address = 10.127.0.10/24
-DNS = 172.21.1.1, 1.1.1.1
-PrivateKey = $Client1PrivateKey
+DNS = 172.21.1.1, 1.1.1.2
+PrivateKey = $Client10PrivateKey
 
 [Peer]
 PublicKey = $WGPublicKey
@@ -68,10 +89,10 @@ echo DEBUG: wg0.conf
 cat /etc/wireguard/wg0.conf
 echo
 echo DEBUG: wgclient_10.conf
-cat /etc/wireguard/wgclient_10.conf
+cat /etc/wireguard/client_10.conf
 echo
 echo Info: Finished wireguard setup
 echo
 echo DEBUG: Wireguard Client QRCode
 echo
-cat /etc/wireguard/wgclient_10.conf | qrencode -t ansiutf8
+cat /etc/wireguard/client_10.conf | qrencode -t ansiutf8

@@ -23,10 +23,10 @@ services:
       - backend
     healthcheck:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.httpd.rule=Host(`${FQDN}`"
-      - "traefik.http.routers.httpd.entrypoints=web"
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.httpd.rule=Host(`${FQDN}`"
+    #   - "traefik.http.routers.httpd.entrypoints=web"
 
   wireguard:
     build: ./app-wireguard
@@ -64,7 +64,6 @@ services:
       #- /data/app-pihole/etc-dnsmasq.d:/etc/dnsmasq.d
       #- /data/app-pihole/etc-pihole:/etc/pihole
     environment:
-      ServerIP: 172.21.1.1
       TZ: Europe/London
       DNSMASQ_LISTENING: local
       IPv6: 'False'
@@ -77,15 +76,18 @@ services:
       CONDITIONAL_FORWARDING_IP: 172.21.0.1
       CONDITIONAL_FORWARDING_DOMAIN: 'localdomain'
       CONDITIONAL_FORWARDING_REVERSE: '0.21.172.in-addr.arpa'
+    dns:
+      - 127.0.0.1
+      - 1.1.1.2
     networks:
       backend:
         ipv4_address: 172.21.1.1
     healthcheck:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null && nc -z localhost 53 && nc -zu localhost 53
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.pihole.rule=(Host(`${FQDN}`)  && Path(`/pihole`))"
-      - "traefik.http.routers.pihole.entrypoints=web"
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.pihole.rule=(Host(`${FQDN}`)  && Path(`/pihole`))"
+    #   - "traefik.http.routers.pihole.entrypoints=web"
 
   traefik:
     image: "traefik:latest"
@@ -121,11 +123,11 @@ services:
       - TZ=Europe/London
     healthcheck:
       test: curl http://localhost:9000
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.portainer.rule=(Host(`${FQDN}`)  && Path(`/portainer`))"
-      - "traefik.http.routers.portainer.entrypoints=web"
-      #- "traefik.http.services.portainer.loadbalancer.server.port=9000"
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.portainer.rule=(Host(`${FQDN}`)  && Path(`/portainer`))"
+    #   - "traefik.http.routers.portainer.entrypoints=web"
+    #   #- "traefik.http.services.portainer.loadbalancer.server.port=9000"
     networks:
       - backend
 # docker container create --name="portainer" \
