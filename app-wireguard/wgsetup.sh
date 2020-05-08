@@ -5,43 +5,34 @@ umask 077
 WGExternalIP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 WGExternalHostname=$(curl http://169.254.169.254/latest/meta-data/public-hostname)
 WGPort=51820
-ClientIncrementer=10
-ClientCount=1
-
-# Generate server preshared key
-if [ ! -f /etc/wireguard/psk.key ]; then
-  WGPreSharedKey=$(wg genpsk)
-  echo $WGPreSharedKey > /etc/wireguard/psk.key
-else
-  WGPreSharedKey=$(cat /etc/wireguard/psk.key)
-fi
-
-# Generate server private key
-if [ ! -f /etc/wireguard/private.key ]; then
-  WGPrivateKey=$(wg genkey)
-  echo $WGPrivateKey > /etc/wireguard/private.key
-else
-  WGPrivateKey=$(cat /etc/wireguard/private.key)
-fi
-WGPublicKey=$(echo $WGPrivateKey | wg pubkey)
-
-# Generate client10 private key
-if [ ! -f /etc/wireguard/client10.key ]; then
-  Client10PrivateKey=$(wg genkey)
-  echo $Client10PrivateKey > /etc/wireguard/client10.key
-else
-  Client10PrivateKey=$(cat /etc/wireguard/client10.key)
-fi
-Client10PublicKey=$(echo $Client10PrivateKey | wg pubkey)
-
+ClientCount=1 #Set to number of clients you wish to create
 
 mkdir -p /etc/wireguard
 
 echo Info: Starting wireguard setup
-echo
+
+
+##############################################################
+# Server Config
+##############################################################
+
+# Generate server preshared key
+if [ ! -f /etc/wireguard/psk.key ]; then
+  echo $(wg genpsk) > /etc/wireguard/psk.key
+fi
+WGPreSharedKey=$(cat /etc/wireguard/psk.key)
+
+# Generate server private key
+if [ ! -f /etc/wireguard/private.key ]; then
+  echo $(wg genkey) > /etc/wireguard/private.key
+fi
+WGPrivateKey=$(cat /etc/wireguard/private.key)
+WGPublicKey=$(echo $WGPrivateKey | wg pubkey)
+
+# Create wireguard server config file
 cat <<EOF > /etc/wireguard/wg0.conf
 [Interface]
-Address = 10.127.0.1/24
+Address = 10.127.0.1/16
 ListenPort = $WGPort
 PrivateKey = $WGPrivateKey
 SaveConfig = false
@@ -64,19 +55,44 @@ PostDown = ip6tables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
 PostDown = iptables -t mangle -D POSTROUTING -p tcp --tcp-flags SYN,RST SYN -o eth0 -j TCPMSS --clamp-mss-to-pmtu
 PostDown = ip6tables -t mangle -D POSTROUTING -p tcp --tcp-flags SYN,RST SYN -o eth0 -j TCPMSS --clamp-mss-to-pmtu
 
-# 10: 10 > client10.conf
-[Peer]
-PublicKey = $Client10PublicKey
-PresharedKey = $WGPreSharedKey
-AllowedIPs = 10.127.0.10/32
 EOF
 echo
-echo
-cat <<EOF > /etc/wireguard/client10.conf
+
+##############################################################
+# Client Config
+##############################################################
+
+ClientID=10
+
+# Iterate over clients
+while [ $ClientCount -gt 0 ]; do
+        echo Processing keys for: Client $ClientCount
+
+        # TODO
+
+        ((ClientCount--))
+done
+
+# Generate client private key
+if [ ! -f /etc/wireguard/client$ClientID.key ]; then
+  echo $(wg genkey) > /etc/wireguard/client$ClientID.key
+fi
+ClientPrivateKey=$(cat /etc/wireguard/client$ClientID.key)
+ClientPublicKey=$(echo $ClientPrivateKey | wg pubkey)
+
+cat <<EOF >> /etc/wireguard/wg0.conf
+[Peer]
+PublicKey = $ClientPublicKey
+PresharedKey = $WGPreSharedKey
+AllowedIPs = 10.127.2.$ClientID/32
+
+EOF
+
+cat <<EOF > /etc/wireguard/client$ClientID.conf
 [Interface]
-Address = 10.127.0.10/24
-DNS = 172.21.1.1, 1.1.1.2
-PrivateKey = $Client10PrivateKey
+Address = 10.127.2.$ClientID/16
+DNS = 172.21.1.1, 1.1.1.2, 1.0.0.2
+PrivateKey = $ClientPrivateKey
 
 [Peer]
 PublicKey = $WGPublicKey
@@ -84,15 +100,29 @@ PresharedKey = $WGPreSharedKey
 AllowedIPs = 0.0.0.0/0, ::/0
 Endpoint = $WGExternalHostname:$WGPort
 EOF
-echo
+
+##############################################################
+# Debug
+##############################################################
+echo --------------------------------
+echo DEBUG
+echo --------------------------------
 echo DEBUG: wg0.conf
 cat /etc/wireguard/wg0.conf
-echo
-echo DEBUG: client10.conf
-cat /etc/wireguard/client10.conf
-echo
-echo Info: Finished wireguard setup
-echo
+echo --------------------------------
+echo DEBUG: client*.conf
+for item in /etc/wireguard/client*.conf; do
+  echo File: $item
+  cat $file
+  echo
+done
+echo --------------------------------
 echo DEBUG: Wireguard Client QRCode
-echo
-cat /etc/wireguard/client10.conf | qrencode -t ansiutf8
+for item in /etc/wireguard/client*.conf; do
+  echo File: $item
+  cat $file | qrencode -t ansiutf8
+  echo
+done
+echo --------------------------------
+echo Info: Finished wireguard setup
+echo --------------------------------

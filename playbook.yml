@@ -6,10 +6,7 @@
       pkgs:
       - wireguard
       - docker.io
-        #- docker-ce
-        #- docker-ce-cli
       - docker-compose
-        #- containerd.io
       - git
 
     tasks:
@@ -125,17 +122,10 @@
         repo: https://github.com/dmccue/hotwire
         dest: "{{ ansible_user_dir }}/deploy/hotwire"
 
-    # Write diag
+    # Write diagnostics
     - uri:
         url: http://ifconfig.me/ip
         return_content: yes
       register: diag
-
     - copy: content={{ diag.content }} dest=/root/diag_externalip
       become: yes
-
-    # - name: "just execute a ls -lrt command"
-    #  shell: "ls -lrt"
-    #  register: "output"
-
-    #- debug: var=output.stdout_lines
