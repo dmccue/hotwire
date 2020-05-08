@@ -100,8 +100,7 @@
     - command: |
         echo "{
           "dns": ["1.1.1.2", "1.0.0.2"],
-          "dns-opts":["use-vc"],
-          "dns-search": ["vpn"]
+          "dns-opts":["use-vc"]
         }"
       register: dockeroutput
     - copy: content={{ dockeroutput.stdout }} dest=/etc/docker/daemon.json
