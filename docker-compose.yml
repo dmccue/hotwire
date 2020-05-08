@@ -68,13 +68,13 @@ services:
       DNSMASQ_LISTENING: local
       IPv6: 'False'
       #DNSSEC: 'True'
-      DNS1: 1.0.0.2
-      DNS2: 1.1.1.2
+      DNS1: 1.1.1.2
+      DNS2: 1.0.0.2
       WEBPASSWORD: PiHole123
       DNS_BOGUS_PRIV: 'True'
       CONDITIONAL_FORWARDING: 'True'
       CONDITIONAL_FORWARDING_IP: 127.0.0.11
-      CONDITIONAL_FORWARDING_DOMAIN: 'local'
+      CONDITIONAL_FORWARDING_DOMAIN: 'vpn'
       CONDITIONAL_FORWARDING_REVERSE: '0.21.172.in-addr.arpa'
     dns:
       - 127.0.0.1
@@ -90,24 +90,24 @@ services:
     #   - "traefik.http.routers.pihole.rule=(Host(`${FQDN}`)  && Path(`/pihole`))"
     #   - "traefik.http.routers.pihole.entrypoints=web"
 
-  traefik:
-    image: "traefik:latest"
-    restart: always
-    container_name: "traefik"
-    command:
-      - "--log.level=DEBUG" # can comment this out
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-    ports:
-      - "80:80"
-      - "8080:8080"
-    networks:
-      - backend
-      - default
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  # traefik:
+  #   image: "traefik:latest"
+  #   restart: always
+  #   container_name: "traefik"
+  #   command:
+  #     - "--log.level=DEBUG" # can comment this out
+  #     - "--api.insecure=true"
+  #     - "--providers.docker=true"
+  #     - "--providers.docker.exposedbydefault=false"
+  #     - "--entrypoints.web.address=:80"
+  #   ports:
+  #     - "80"
+  #     - "8080"
+  #   networks:
+  #     - backend
+  #     - default
+  #   volumes:
+  #     - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
 
   portainer:
