@@ -73,23 +73,25 @@ echo --------------------------------
 # Iterate over clients
 ClientMax=$((ClientID+ClientCount))
 while [ $ClientID -lt $ClientMax ]; do
-        echo Processing keys for: Client $ClientID
 
         # Generate client private key
+        echo Processing keys for: Client $ClientID
         if [ ! -f /etc/wireguard/client$ClientID.key ]; then
           echo $(wg genkey) > /etc/wireguard/client$ClientID.key
         fi
         ClientPrivateKey=$(cat /etc/wireguard/client$ClientID.key)
         ClientPublicKey=$(echo $ClientPrivateKey | wg pubkey)
 
+        # Addition to server config file
         cat <<EOF >> /etc/wireguard/wg0.conf
+
         [Peer]
         PublicKey = $ClientPublicKey
         PresharedKey = $WGPreSharedKey
         AllowedIPs = 10.127.2.$ClientID/32
+EOF
 
-        EOF
-
+        # Create client config file
         cat <<EOF > /etc/wireguard/client$ClientID.conf
         [Interface]
         Address = 10.127.2.$ClientID/16
@@ -101,7 +103,7 @@ while [ $ClientID -lt $ClientMax ]; do
         PresharedKey = $WGPreSharedKey
         AllowedIPs = 0.0.0.0/0, ::/0
         Endpoint = $WGExternalHostname:$WGPort
-        EOF
+EOF
 
         ((ClientID++))
         [ $ClientID -gt 254 ] && break
@@ -123,14 +125,14 @@ echo --------------------------------
 echo DEBUG: client*.conf
 for item in /etc/wireguard/client*.conf; do
   echo File: $item
-  cat $file
+  cat $item
   echo
 done
 echo --------------------------------
 echo DEBUG: Wireguard Client QRCode
 for item in /etc/wireguard/client*.conf; do
   echo File: $item
-  cat $file | qrencode -t ansiutf8
+  cat $item | qrencode -t ansiutf8
   echo
 done
 echo --------------------------------
