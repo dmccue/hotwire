@@ -83,7 +83,6 @@
       become: yes
     - service: name=systemd-resolved state=stopped
       become: yes
-
     - command: |
         echo "nameserver 172.26.0.2
         nameserver 1.1.1.1
@@ -101,6 +100,14 @@
         groups: docker
         append: yes
       become: yes
+    - command: |
+        echo "{
+          "dns": ["1.1.1.2", "1.0.0.2"],
+          "dns-opts":["use-vc"],
+          "dns-search": ["vpn"]
+        }"
+      register: dockeroutput
+    - copy: content={{ dockeroutput.stdout }} dest=/etc/docker/daemon.json
     - service: name=docker state=reloaded
       become: yes
 
