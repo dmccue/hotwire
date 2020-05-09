@@ -95,7 +95,7 @@ EOF
         cat <<EOF > /etc/wireguard/client$ClientID.conf
         [Interface]
         Address = 10.127.2.$ClientID/16
-        DNS = 172.21.1.1, 1.1.1.2, 1.0.0.2
+        DNS = 172.21.1.1
         PrivateKey = $ClientPrivateKey
 
         [Peer]
