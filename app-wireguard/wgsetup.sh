@@ -10,10 +10,6 @@ ClientCount=1 # Set to number of clients you wish to create
 umask 077
 mkdir -p /etc/wireguard
 
-echo --------------------------------
-echo Info: Starting wireguard setup
-echo --------------------------------
-
 ##############################################################
 # Server Config
 ##############################################################
@@ -67,46 +63,47 @@ echo
 # Client Config
 ##############################################################
 echo --------------------------------
-echo Info: Clients setup
+echo Info: Client setup
 echo --------------------------------
 
 # Iterate over clients
 ClientMax=$((ClientID+ClientCount))
 while [ $ClientID -lt $ClientMax ]; do
 
-        # Generate client private key
-        echo Processing keys for: Client $ClientID
-        if [ ! -f /etc/wireguard/client$ClientID.key ]; then
-          echo $(wg genkey) > /etc/wireguard/client$ClientID.key
-        fi
-        ClientPrivateKey=$(cat /etc/wireguard/client$ClientID.key)
-        ClientPublicKey=$(echo $ClientPrivateKey | wg pubkey)
+    # Generate client private key
+    echo Processing keys for: Client $ClientID
+    if [ ! -f /etc/wireguard/client$ClientID.key ]; then
+      echo $(wg genkey) > /etc/wireguard/client$ClientID.key
+    fi
+    ClientPrivateKey=$(cat /etc/wireguard/client$ClientID.key)
+    ClientPublicKey=$(echo $ClientPrivateKey | wg pubkey)
 
-        # Addition to server config file
-        cat <<EOF >> /etc/wireguard/wg0.conf
+    # Addition to server config file
+    cat <<EOF >> /etc/wireguard/wg0.conf
 
-        [Peer]
-        PublicKey = $ClientPublicKey
-        PresharedKey = $WGPreSharedKey
-        AllowedIPs = 10.127.2.$ClientID/32
+    # Client: $ClientID
+    [Peer]
+    PublicKey = $ClientPublicKey
+    PresharedKey = $WGPreSharedKey
+    AllowedIPs = 10.127.2.$ClientID/32
 EOF
 
-        # Create client config file
-        cat <<EOF > /etc/wireguard/client$ClientID.conf
-        [Interface]
-        Address = 10.127.2.$ClientID/16
-        DNS = 172.21.1.1
-        PrivateKey = $ClientPrivateKey
+    # Create client config file
+    cat <<EOF > /etc/wireguard/client$ClientID.conf
+    [Interface]
+    Address = 10.127.2.$ClientID/16
+    DNS = 172.21.1.1
+    PrivateKey = $ClientPrivateKey
 
-        [Peer]
-        PublicKey = $WGPublicKey
-        PresharedKey = $WGPreSharedKey
-        AllowedIPs = 0.0.0.0/0, ::/0
-        Endpoint = $WGExternalHostname:$WGPort
+    [Peer]
+    PublicKey = $WGPublicKey
+    PresharedKey = $WGPreSharedKey
+    AllowedIPs = 0.0.0.0/0, ::/0
+    Endpoint = $WGExternalHostname:$WGPort
 EOF
 
-        ((ClientID++))
-        [ $ClientID -gt 254 ] && break
+    ((ClientID++))
+    [ $ClientID -gt 254 ] && break
 done
 
 

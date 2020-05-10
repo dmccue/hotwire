@@ -10,23 +10,24 @@ services:
       - backend
 
 
-  httpd:
-    build: ./app-httpd
+  webserver:
+    build: ./app-webserver
     restart: always
     ports:
       - "80/tcp"
+      - "443/tcp"
     volumes:
-      - ./app-httpd/htdocs:/usr/local/apache2/htdocs
+      - ./app-webserver/content:/var/www
+      #- ./app-webserver/etc:/etc/nginx/conf.d:ro
     dns:
       - 172.21.1.1
     networks:
       - backend
     healthcheck:
       test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null
-    # labels:
-    #   - "traefik.enable=true"
-    #   - "traefik.http.routers.httpd.rule=Host(`${FQDN}`"
-    #   - "traefik.http.routers.httpd.entrypoints=web"
+
+
+
 
   wireguard:
     build: ./app-wireguard
@@ -50,36 +51,37 @@ services:
 
 
   pihole:
-    #image: pihole/pihole
     build: ./app-pihole
     restart: always
     ports:
       - "80/tcp"
+      - "53/tcp"
       - "53/udp"
       #- "53:53/udp" #This breaks docker resolution
-      #- "443/tcp"
+      - "443/tcp"
     volumes:
       - /etc/timezone:/etc/timezone:ro
-      #- /data/app-pihole/etc-dnsmasq.d:/etc/dnsmasq.d
-      #- /data/app-pihole/etc-pihole:/etc/pihole
+      #- ./app-pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+      #- ./app-pihole/etc-pihole:/etc/pihole
+      - /data/shared:/data/shared:ro
     environment:
       ServerIP: 172.21.1.1
       TZ: Europe/London
       DNSMASQ_LISTENING: local
       IPv6: 'False'
-      #DNSSEC: 'True'
+      DNSSEC: 'True'
       DNS1: 1.1.1.2
       DNS2: 1.0.0.2
       WEBPASSWORD: PiHole123
       DNS_BOGUS_PRIV: 'True'
-      CONDITIONAL_FORWARDING: 'True'
-      CONDITIONAL_FORWARDING_IP: 127.0.0.11
-      CONDITIONAL_FORWARDING_DOMAIN: 'vpn'
-      CONDITIONAL_FORWARDING_REVERSE: '0.21.172.in-addr.arpa'
+      # CONDITIONAL_FORWARDING: 'True'
+      # CONDITIONAL_FORWARDING_IP: 127.0.0.11
+      # CONDITIONAL_FORWARDING_DOMAIN: 'vpn'
+      # CONDITIONAL_FORWARDING_REVERSE: '0.21.172.in-addr.arpa'
     dns:
       - 127.0.0.1
-      - 1.1.1.2
-      - 1.0.0.2
+      # - 1.1.1.2
+      # - 1.0.0.2
     networks:
       backend:
         ipv4_address: 172.21.1.1
@@ -119,7 +121,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /data/portainer/data:/data
-      - /data/shared:/shared
+      # - /data/shared:/shared
     environment:
       - TZ=Europe/London
     healthcheck:
@@ -131,12 +133,7 @@ services:
     #   #- "traefik.http.services.portainer.loadbalancer.server.port=9000"
     networks:
       - backend
-# docker container create --name="portainer" \
-#    --volume /opt/docker/volumes/portainer/data:/data \
-#    --volume /var/run/docker.sock:/var/run/docker.sock \
-#    --publish 9000:9000 \
-#    --restart=always \
-#    portainer/portainer
+
 
 networks:
   backend:

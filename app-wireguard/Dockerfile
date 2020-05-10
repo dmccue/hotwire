@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntutest
 
 RUN export DEBIAN_FRONTEND=noninteractive; \
     apt-get update && \
