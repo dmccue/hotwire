@@ -104,6 +104,7 @@
         }"
       register: dockeroutput
     - copy: content={{ dockeroutput.stdout }} dest=/etc/docker/daemon.json
+      become: yes
     - service: name=docker state=reloaded
       become: yes
 
