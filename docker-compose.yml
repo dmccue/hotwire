@@ -50,68 +50,68 @@ services:
       test: wg show | grep listening
 
 
-  #https://hub.docker.com/r/adguard/adguardhome
-  adguard:
-    image: adguard/adguardhome
-    restart: always
-    volumes:
-      - /data/adguard/work:/opt/adguardhome/work
-      - /data/adguard/conf:/opt/adguardhome/conf
-    ports:
-      - "53/tcp"
-      - "53/udp"
-      - "67/udp"
-      - "68/tcp"
-      - "68/udp"
-      - "80/tcp"
-      - "443/tcp"
-      - "853/tcp"
-      - "3000/tcp"
-    networks:
-      backend:
-        ipv4_address: 172.21.1.1
-
-  # pihole:
-  #   build: ./app-pihole
+  # #https://hub.docker.com/r/adguard/adguardhome
+  # adguard:
+  #   image: adguard/adguardhome
   #   restart: always
+  #   volumes:
+  #     - /data/adguard/work:/opt/adguardhome/work
+  #     - /data/adguard/conf:/opt/adguardhome/conf
   #   ports:
-  #     - "80/tcp"
   #     - "53/tcp"
   #     - "53/udp"
-  #     #- "53:53/udp" #This breaks docker resolution
+  #     - "67/udp"
+  #     - "68/tcp"
+  #     - "68/udp"
+  #     - "80/tcp"
   #     - "443/tcp"
-  #   volumes:
-  #     - /etc/timezone:/etc/timezone:ro
-  #     #- ./app-pihole/etc-dnsmasq.d:/etc/dnsmasq.d
-  #     #- ./app-pihole/etc-pihole:/etc/pihole
-  #     - /data/shared:/data/shared:ro
-  #   environment:
-  #     ServerIP: 172.21.1.1
-  #     TZ: Europe/London
-  #     DNSMASQ_LISTENING: local
-  #     IPv6: 'False'
-  #     DNSSEC: 'True'
-  #     DNS1: 1.1.1.2
-  #     DNS2: 1.0.0.2
-  #     WEBPASSWORD: PiHole123
-  #     DNS_BOGUS_PRIV: 'True'
-  #     # CONDITIONAL_FORWARDING: 'True'
-  #     # CONDITIONAL_FORWARDING_IP: 127.0.0.11
-  #     # CONDITIONAL_FORWARDING_DOMAIN: 'vpn'
-  #     # CONDITIONAL_FORWARDING_REVERSE: '0.21.172.in-addr.arpa'
-  #   dns:
-  #     - 127.0.0.1
-  #     # - 1.1.1.2
-  #     # - 1.0.0.2
+  #     - "853/tcp"
+  #     - "3000/tcp"
   #   networks:
   #     backend:
   #       ipv4_address: 172.21.1.1
-  #   healthcheck:
-  #     test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null && nc -z localhost 53 && nc -zu localhost 53
-  #   # labels:
-  #   #   - "traefik.enable=true"
-  #   #   - "traefik.http.routers.pihole.rule=(Host(`${FQDN}`)  && Path(`/pihole`))"
-  #   #   - "traefik.http.routers.pihole.entrypoints=web"
+
+  pihole:
+    build: ./app-pihole
+    restart: always
+    ports:
+      - "80/tcp"
+      - "53/tcp"
+      - "53/udp"
+      #- "53:53/udp" #This breaks docker resolution
+      - "443/tcp"
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - ./pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+      - ./pihole/etc-pihole:/etc/pihole
+      - /data/shared:/data/shared:ro
+    environment:
+      ServerIP: 172.21.1.1
+      TZ: Europe/London
+      DNSMASQ_LISTENING: local
+      IPv6: 'False'
+      DNSSEC: 'True'
+      DNS1: 1.1.1.2
+      DNS2: 1.0.0.2
+      WEBPASSWORD: PiHole123
+      DNS_BOGUS_PRIV: 'True'
+      # CONDITIONAL_FORWARDING: 'True'
+      # CONDITIONAL_FORWARDING_IP: 127.0.0.11
+      # CONDITIONAL_FORWARDING_DOMAIN: 'vpn'
+      # CONDITIONAL_FORWARDING_REVERSE: '0.21.172.in-addr.arpa'
+    dns:
+      # - 127.0.0.1
+      - 1.1.1.2
+      - 1.0.0.2
+    networks:
+      backend:
+        ipv4_address: 172.21.1.1
+    healthcheck:
+      test: nc -z localhost 80 && curl -f http://localhost 2>&1 >/dev/null && nc -z localhost 53 && nc -zu localhost 53
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.pihole.rule=(Host(`${FQDN}`)  && Path(`/pihole`))"
+    #   - "traefik.http.routers.pihole.entrypoints=web"
 
   # traefik:
   #   image: "traefik:latest"
