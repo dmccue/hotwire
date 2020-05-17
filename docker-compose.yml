@@ -82,8 +82,8 @@ services:
       - "443/tcp"
     volumes:
       - /etc/timezone:/etc/timezone:ro
-      - ./pihole/etc-dnsmasq.d:/etc/dnsmasq.d
-      - ./pihole/etc-pihole:/etc/pihole
+      - /data/pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+      - /data/pihole/etc-pihole:/etc/pihole
       - /data/shared:/data/shared:ro
     environment:
       ServerIP: 172.21.1.1
